@@ -8,21 +8,21 @@
 # # Variables
 # freesurfer=`jq -r '.freesurfer' config.json`;
 dwi=`./jq -r '.dwi' config.json`;
-fa=`jq -r '.fa' config.json`;
-ad=`jq -r '.ad' config.json`;
-md=`jq -r '.md' config.json`;
-rd=`jq -r '.rd' config.json`;
-icvf=`jq -r '.icvf' config.json`;
-isovf=`jq -r '.isovf' config.json`;
-od=`jq -r '.od' config.json`;
+fa=`./jq -r '.fa' config.json`;
+ad=`./jq -r '.ad' config.json`;
+md=`./jq -r '.md' config.json`;
+rd=`./jq -r '.rd' config.json`;
+icvf=`./jq -r '.icvf' config.json`;
+isovf=`./jq -r '.isovf' config.json`;
+od=`./jq -r '.od' config.json`;
 sigma_val=`./jq -r '.sigma' config.json`;
-sigma="`echo "sigma_val" | bc -l`";
+sigma=`awk "BEGIN {print $sigma_val}"`;
 HEMI="lh rh";
 
-if [ -z ${fa} ];
+if [ $fa = "null" ];
 then
 	METRIC="icvf isovf od"
-elif [ -z ${icvf} ]; then
+elif [ $icvf = "null" ]; then
 	METRIC="ad fa md rd"
 else
 	METRIC="ad fa md rd icvf isovf od"
@@ -49,7 +49,7 @@ for hemi in $HEMI
 		wb_command -metric-palette ./cortexmap/surf/${hemi}.native.thickness.shape.gii MODE_AUTO_SCALE_PERCENTAGE -pos-percent 4 96 -interpolate true -palette-name videen_style -disp-pos true -disp-neg false -disp-zero false;
 		wb_command -set-map-name ./cortexmap/surf/${hemi}.native.thickness.shape.gii 1 "${hemi}"_Thickness;
 		wb_command -metric-math "thickness > 0" ./cortexmap/surf/${hemi}.roi.native.shape.gii -var thickness ./cortexmap/surf/${hemi}.native.thickness.shape.gii;
-		wb_command -metric-fill-holes ./surf/${hemi}.midthickness.native.surf.gii ./surf/${hemi}.roi.native.shape.gii ./surf/${hemi}.roi.native.shape.gii;
+		wb_command -metric-fill-holes ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/surf/${hemi}.roi.native.shape.gii ./cortexmap/surf/${hemi}.roi.native.shape.gii;
 		wb_command -metric-remove-islands ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/surf/${hemi}.roi.native.shape.gii ./cortexmap/surf/${hemi}.roi.native.shape.gii;
 		wb_command -set-map-names ./cortexmap/surf/${hemi}.roi.native.shape.gii -map 1 "${hemi}"_ROI;
 	done
@@ -57,7 +57,7 @@ for hemi in $HEMI
 # resampling metric volumes to cortical ribbon volume
 for metric in $METRIC
 	do
-		wb_command -volume-affine-resample ./cortexmap/metric/${metric}.nii.gz ./acpcxform.mat ./cortexmap/surf/ribbon.nii.gz TRILINEAR ./cortexmap/metric/${metric}.nii.gz -flirt ${dwi} ./cortexmap/surf/ribbon.nii.gz;
+		wb_command -volume-affine-resample ./metric/${metric}.nii.gz ./acpcxform.mat ./cortexmap/surf/ribbon.nii.gz TRILINEAR ./metric/${metric}.nii.gz -flirt ${dwi} ./cortexmap/surf/ribbon.nii.gz;
 	done
 
 # mapping metrics to midthickness surface
@@ -66,10 +66,13 @@ for hemi in $HEMI
 		for metric in $METRIC
 			do
 				
-				wb_command -volume-to-surface-mapping ./cortexmap/metric/${metric}.nii.gz ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/func/${hemi}.${metric}.func.gii -myelin-style ./cortexmap/surf/${hemi}.ribbon.nii.gz ./cortexmap/surf/${hemi}.native.thickness.shape.gii $sigma;
+				wb_command -volume-to-surface-mapping ./metric/${metric}.nii.gz ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/func/${hemi}.${metric}.func.gii -myelin-style ./cortexmap/surf/${hemi}.ribbon.nii.gz ./cortexmap/surf/${hemi}.native.thickness.shape.gii $sigma;
 				wb_command -metric-smoothing ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/func/${hemi}.${metric}.func.gii $sigma ./cortexmap/func/${hemi}.${metric}.func.gii;
 				wb_command -metric-mask ./cortexmap/func/${hemi}.${metric}.func.gii ./cortexmap/surf/${hemi}.roi.native.shape.gii ./cortexmap/func/${hemi}.${metric}.func.gii;
 				wb_command -set-map-name ./cortexmap/func/${hemi}.${metric}.func.gii 1 "${hemi}"_"${metric}"
 				wb_command -metric-palette ./cortexmap/func/${hemi}.${metric}.func.gii MODE_AUTO_SCALE_PERCENTAGE -pos-percent 4 96 -interpolate true -palette-name videen_style -disp-pos true -disp-neg false -disp-zero false;
 			done
 	done
+
+# cleanup
+rm -rf metric dwi_resliced acpcxform.mat;

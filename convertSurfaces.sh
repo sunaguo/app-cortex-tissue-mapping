@@ -15,13 +15,13 @@ isovf=`jq -r '.isovf' config.json`;
 od=`jq -r '.od' config.json`;
 HEMI="lh rh";
 
-if [ -z ${fa} ];
+if [ "$fa" = "null" ];
 then
-	METRIC="icvf isovf od"
-elif [ -z ${icvf} ]; then
-	METRIC="ad fa md rd"
+	METRIC="${icvf} ${isovf} ${od}"
+elif [ "$icvf" = "null" ]; then
+	METRIC="${ad} ${fa} ${md} ${rd}"
 else
-	METRIC="ad fa md rd icvf isovf od"
+	METRIC="${ad} ${fa} ${md} ${rd} ${icvf} ${isovf} ${od}"
 fi
 
 ## make directory and copy metric files to folder
@@ -45,7 +45,7 @@ for hemi in $HEMI
 		# convert files
 		mris_convert ${freesurfer}/surf/${hemi}.pial ./cortexmap/surf/${hemi}.pial.surf.gii;
 		mris_convert ${freesurfer}/surf/${hemi}.white ./cortexmap/surf/${hemi}.white.surf.gii;
-		mris_convert -c ${freesurfer}/surf/${hemi}.thickness ${freesurfer}/surf/${hemi}.white ./cortexmap./surf/${hemi}.native.thickness.shape.gii;
+		mris_convert -c ${freesurfer}/surf/${hemi}.thickness ${freesurfer}/surf/${hemi}.white ./cortexmap/surf/${hemi}.native.thickness.shape.gii;
 		mri_convert ${freesurfer}/mri/${hemi}.ribbon.mgz ./cortexmap/surf/${hemi}.ribbon.nii.gz;
 
 		# set up aparc.a2009s labels
