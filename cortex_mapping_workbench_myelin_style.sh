@@ -8,16 +8,21 @@
 # # Variables
 # freesurfer=`jq -r '.freesurfer' config.json`;
 dwi=`./jq -r '.dwi' config.json`;
-tensor=`./jq -r '.tensor' config.json`;
-noddi=`./jq -r '.noddi' config.json`;
+fa=`jq -r '.fa' config.json`;
+ad=`jq -r '.ad' config.json`;
+md=`jq -r '.md' config.json`;
+rd=`jq -r '.rd' config.json`;
+icvf=`jq -r '.icvf' config.json`;
+isovf=`jq -r '.isovf' config.json`;
+od=`jq -r '.od' config.json`;
 sigma_val=`./jq -r '.sigma' config.json`;
 sigma="`echo "sigma_val" | bc -l`";
 HEMI="lh rh";
 
-if [ -z ${tensor} ];
+if [ -z ${fa} ];
 then
 	METRIC="icvf isovf od"
-elif [ -z ${noddi} ]; then
+elif [ -z ${icvf} ]; then
 	METRIC="ad fa md rd"
 else
 	METRIC="ad fa md rd icvf isovf od"
