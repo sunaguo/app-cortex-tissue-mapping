@@ -6,14 +6,19 @@ export SUBJECTS_DIR=./
 # Variables
 freesurfer=`jq -r '.freesurfer' config.json`;
 dwi=`jq -r '.dwi' config.json`;
-tensor=`jq -r '.tensor' config.json`;
-noddi=`jq -r '.noddi' config.json`;
+fa=`jq -r '.fa' config.json`;
+ad=`jq -r '.ad' config.json`;
+md=`jq -r '.md' config.json`;
+rd=`jq -r '.rd' config.json`;
+icvf=`jq -r '.icvf' config.json`;
+isovf=`jq -r '.isovf' config.json`;
+od=`jq -r '.od' config.json`;
 HEMI="lh rh";
 
-if [ -z ${tensor} ];
+if [ -z ${fa} ];
 then
 	METRIC="icvf isovf od"
-elif [ -z ${noddi} ]; then
+elif [ -z ${icvf} ]; then
 	METRIC="ad fa md rd"
 else
 	METRIC="ad fa md rd icvf isovf od"
@@ -26,27 +31,11 @@ mkdir ./cortexmap/surf;
 mkdir ./cortexmap/label;
 mkdir ./cortexmap/func;
 
-# Tensor
-if [ -z ${tensor} ];
-then
-	echo "tensor not being used"
-else
-	for i in ${tensor}/*
-		do	
-			cp -v "${i}" ./metric/;
-		done
-fi
 
-# NODDI
-if [ -z ${noddi} ];
-then
-	echo "noddi not being used"
-else
-	for i in ${noddi}/*
-		do
-			cp -v "${i}" ./metric/;
-		done
-fi
+for i in ${METRIC}
+	do
+		cp -v "${i}" ./metric/;
+	done
 
 # convert ribbon to nifti.gz
 mri_convert ${freesurfer}/mri/ribbon.mgz ./cortexmap/surf/ribbon.nii.gz;
