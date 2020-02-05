@@ -67,8 +67,9 @@ for hemi in $HEMI
 			do
 				
 				wb_command -volume-to-surface-mapping ./metric/${metric}.nii.gz ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/func/${hemi}.${metric}.func.gii -myelin-style ./cortexmap/surf/${hemi}.ribbon.nii.gz ./cortexmap/surf/${hemi}.native.thickness.shape.gii $sigma;
-				wb_command -metric-smoothing ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/func/${hemi}.${metric}.func.gii $sigma ./cortexmap/func/${hemi}.${metric}.func.gii;
+				#wb_command -metric-smoothing ./cortexmap/surf/${hemi}.midthickness.native.surf.gii ./cortexmap/func/${hemi}.${metric}.func.gii $sigma ./cortexmap/func/${hemi}.${metric}.func.gii;
 				wb_command -metric-mask ./cortexmap/func/${hemi}.${metric}.func.gii ./cortexmap/surf/${hemi}.roi.native.shape.gii ./cortexmap/func/${hemi}.${metric}.func.gii;
+				wb_command -metric-dilate ./cortexmap/func/${hemi}.${metric}.func.gii ./cortexmap/surf/${hemi}.midthickness.native.surf.gii 20 ./cortexmap/func/${hemi}.${metric}.func.gii -nearest
 				wb_command -set-map-name ./cortexmap/func/${hemi}.${metric}.func.gii 1 "${hemi}"_"${metric}"
 				wb_command -metric-palette ./cortexmap/func/${hemi}.${metric}.func.gii MODE_AUTO_SCALE_PERCENTAGE -pos-percent 4 96 -interpolate true -palette-name videen_style -disp-pos true -disp-neg false -disp-zero false;
 			done
