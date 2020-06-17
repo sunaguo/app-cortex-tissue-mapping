@@ -1,22 +1,17 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=1,walltime=1:00:00
-#PBS -N cortex_mapping
+#PBS -l nodes=1:ppn=8,walltime=1:00:00
+#PBS -N app-cortex-mapping
 #PBS -l vmem=16gb
 #PBS -V
 
-# create surfaces and convert volumes
-#[ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
-time singularity exec --writable -e docker://brainlife/freesurfer_on_mcr:6.0.0 bash -c "echo $FREESURFER_LICENSE > /usr/local/freesurfer/license.txt && ./convertSurfaces.sh"
+[ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
+echo $FREESURFER_LICENSE > license.txt
 
-# align dwi to cortical ribbon
-time singularity exec -e docker://brainlife/fsl:5.0.9 ./alignDwi.sh
-
-# map metrics to midthickness surface
-time singularity exec -e docker://brainlife/connectome_workbench ./cortex_mapping_workbench_myelin_style.sh
-
-if [ -z ./cortexmap/func/ ];then
-	echo "functional mapping directory empty"
-	exit 1
-else
-	echo "functional mapping complete"
+if [ ! -f snr.nii.gz ]; then
+	echo "computing snr"
+	time singularity exec -e docker://brainlife/fsl:5.0.9 ./compute-snr.sh
 fi
+
+echo "mapping measures to cortical surface"
+time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.4.2-freesurfer-update ./cortex-mapping-pipeline.sh
+
