@@ -8,9 +8,6 @@ bvals=`jq -r '.bvals' config.json`
 bvecs=`jq -r '.bvecs' config.json`
 mask=`jq -r '.brainmask' config.json`
 
-#### make directories ####
-mkdir -p outdir raw
-
 #### extract b0 images ####
 [ ! -f nodif.nii.gz ] && select_dwi_vols ${dwi} \
 	${bvals} \
@@ -30,14 +27,4 @@ mkdir -p outdir raw
 [[ ${mask} == 'null' ]] && bet nodif_mean nodif_brain -f 0.3 -g 0 -m && mv nodif_brain_mask.nii.gz mask.nii.gz && mask="mask.nii.gz"
 
 #### mask snr ####
-[ ! -f ./outdir/snr.nii.gz ] && fslmaths snr.nii.gz -mas ${mask} ./outdir/snr.nii.gz
-
-#### final checks and cleanup ####
-if [ -f ./outdir/snr.nii.gz ]; then
-	mv *.nii.gz ./raw/
-	echo "temporal snr computed"
-	exit 0
-else
-	echo "temporal snr calculation failed. see logs and derivatives"
-	exit 1
-fi
+fslmaths snr.nii.gz -mas ${mask} snr.nii.gz
