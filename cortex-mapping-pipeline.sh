@@ -9,6 +9,7 @@ mkdir metric;
 mkdir ./cortexmap/surf ./cortexmap/surf/mni;
 mkdir ./cortexmap/label;
 mkdir ./cortexmap/func;
+mkdir raw;
 echo "making directories complete"
 
 #### Variables ####
@@ -25,7 +26,6 @@ isovf=`jq -r '.isovf' config.json`;
 odi=`jq -r '.odi' config.json`;
 warp=`jq -r '.warp' config.json`;
 inv_warp=`jq -r '.inverse_warp' config.json`;
-MNI=`jq -r '.mni' config.json`;
 echo "parsing inputs complete"
 
 # set sigmas
