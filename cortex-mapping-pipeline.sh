@@ -6,7 +6,6 @@
 echo "making directories"
 mkdir cortexmap;
 mkdir metric;
-mkdir ./cortexmap/surf ./cortexmap/surf/mni;
 mkdir ./cortexmap/label;
 mkdir ./cortexmap/func;
 mkdir raw;
@@ -45,8 +44,19 @@ echo "hemisphere labels set"
 
 # set other variables for ease of scripting
 echo "setting useful variables"
-SPACES="native mni"
-SPACES_DIR=("./cortexmap/surf" "./cortexmap/surf/mni")
+if [[ ! ${warp} == 'null' ]]; then
+	SPACES="native mni"
+	SPACES_DIR=("./cortexmap/surf" "./cortexmap/surf/mni")
+else
+	SPACES="native"
+	SPACES_DIR=("./cortexmap/surf/")
+fi
+
+for spaces in ${SPACES_DIR[*]}
+do
+	mkdir -p ${spaces}
+done
+
 FUNC_DIR=("./cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
 echo "variables set"
@@ -123,11 +133,13 @@ do
 				c_ras.mat \
 				${SPACES_DIR[0]}/${hemi}.cras.${SURFS}
 
-			# apply MNI warp
-			[ ! -f ${SPACES_DIR[1]}/${hemi}.mni.${SURFS} ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.cras.${SURFS} ${inv_warp} \
-				${SPACES_DIR[1]}/${hemi}.mni.${SURFS} \
-				-fnirt \
-				${warp}
+			if [[ ! ${warp} == 'null' ]]; then
+				# apply MNI warp
+				[ ! -f ${SPACES_DIR[1]}/${hemi}.mni.${SURFS} ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.cras.${SURFS} ${inv_warp} \
+					${SPACES_DIR[1]}/${hemi}.mni.${SURFS} \
+					-fnirt \
+					${warp}
+			fi
 		done
 
 		# create midthickness surfaces
@@ -143,10 +155,12 @@ do
 				-surface-type ANATOMICAL \
 				-surface-secondary-type MIDTHICKNESS
 
-			[ ! -f ${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii ${inv_warp} \
-				${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii \
-				-fnirt \
-				${warp}
+			if [[ ! ${warp} == 'null' ]]; then
+				[ ! -f ${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii ${inv_warp} \
+					${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii \
+					-fnirt \
+					${warp}
+			fi
 		fi
 
 		# identify number of vertices for inflation
