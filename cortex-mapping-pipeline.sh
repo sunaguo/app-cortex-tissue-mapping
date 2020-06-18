@@ -10,27 +10,27 @@ OMP_NUM_THREADS=8
 
 #### make directory and copy metric files to folder ####
 echo "making directories"
-mkdir cortexmap;
-mkdir metric;
-mkdir ./cortexmap/label;
-mkdir ./cortexmap/func;
-mkdir raw;
+mkdir cortexmap
+mkdir metric
+mkdir ./cortexmap/label
+mkdir ./cortexmap/func
+mkdir raw
 echo "making directories complete"
 
 #### Variables ####
 # parse inputs
 echo "parsing inputs"
 freesurfer=`jq -r '.freesurfer' config.json`
-dwi=`jq -r '.dwi' config.json`;
-fa=`jq -r '.fa' config.json`;
-ad=`jq -r '.ad' config.json`;
-md=`jq -r '.md' config.json`;
-rd=`jq -r '.rd' config.json`;
-ndi=`jq -r '.ndi' config.json`;
-isovf=`jq -r '.isovf' config.json`;
-odi=`jq -r '.odi' config.json`;
-warp=`jq -r '.warp' config.json`;
-inv_warp=`jq -r '.inverse_warp' config.json`;
+dwi=`jq -r '.dwi' config.json`
+fa=`jq -r '.fa' config.json`
+ad=`jq -r '.ad' config.json`
+md=`jq -r '.md' config.json`
+rd=`jq -r '.rd' config.json`
+ndi=`jq -r '.ndi' config.json`
+isovf=`jq -r '.isovf' config.json`
+odi=`jq -r '.odi' config.json`
+warp=`jq -r '.warp' config.json`
+inv_warp=`jq -r '.inverse_warp' config.json`
 echo "parsing inputs complete"
 
 # set sigmas
@@ -44,7 +44,7 @@ echo "sigma set to ${MappingSigma}"
 
 # set hemisphere labels
 echo "set hemisphere labels"
-HEMI="lh rh";
+HEMI="lh rh"
 CARETHemi="L R"
 echo "hemisphere labels set"
 
@@ -84,7 +84,7 @@ echo "copying over diffusion metric data"
 for i in ${METRIC}
 	do
 		ii=$(eval "echo \$${i}")
-		[ ! -f ./metric/${i}.nii.gz ] && cp -v "${ii}" ./metric/;
+		[ ! -f ./metric/${i}.nii.gz ] && cp -v "${ii}" ./metric/
 	done
 echo "diffusion data copied"
 
@@ -105,7 +105,7 @@ echo "transform computed"
 #### convert ribbons and surface files ####
 # ribbon
 echo "converting ribbon files"
-[ ! -f ${SPACES_DIR[0]}/ribbon.nii.gz ] && mri_convert ${freesurfer}/mri/ribbon.mgz ${SPACES_DIR[0]}/ribbon.nii.gz;
+[ ! -f ${SPACES_DIR[0]}/ribbon.nii.gz ] && mri_convert ${freesurfer}/mri/ribbon.mgz ${SPACES_DIR[0]}/ribbon.nii.gz
 
 # extract hemispheric ribbons
 [ ! -f ./ribbon_lh.nii.gz ] && fslmaths ${SPACES_DIR[0]}/ribbon.nii.gz -thr 3 -uthr 3 -bin ./ribbon_lh.nii.gz
@@ -153,7 +153,7 @@ do
 			wb_command -surface-average \
 				${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii \
 				-surf ${SPACES_DIR[0]}/${hemi}.cras.white.surf.gii \
-				-surf ${SPACES_DIR[0]}/${hemi}.cras.pial.surf.gii;
+				-surf ${SPACES_DIR[0]}/${hemi}.cras.pial.surf.gii
 
 			wb_command -set-structure \
 				${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii \
@@ -196,7 +196,7 @@ do
 		if [ ! -f ${outdir}/${hemi}.${thickness_name} ]; then
 			mris_convert -c ${freesurfer}/surf/${hemi}.thickness \
 				${freesurfer}/surf/${hemi}.white \
-				${outdir}/${hemi}.${thickness_name};
+				${outdir}/${hemi}.${thickness_name}
 
 			wb_command -set-structure ${outdir}/${hemi}.${thickness_name} \
 				${STRUCTURE}
@@ -256,7 +256,7 @@ do
 			mris_convert --annot \
 				${freesurfer}/label/${hemi}.aparc.a2009s.annot \
 				${freesurfer}/surf/${hemi}.pial \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii;
+				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 
 			wb_command -set-structure \
 				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
