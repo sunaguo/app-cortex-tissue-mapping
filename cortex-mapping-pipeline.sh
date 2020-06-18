@@ -2,6 +2,12 @@
 
 ## This script will create a midthickness surface, map tensor and NODDI values to this surface, and compute stats for each ROI from Freesurfer parcellation
 
+set -x
+set -e
+
+#### Set cores ####
+export OMP_NUM_THREADS=8
+
 #### make directory and copy metric files to folder ####
 echo "making directories"
 mkdir cortexmap;
