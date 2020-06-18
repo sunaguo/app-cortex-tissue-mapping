@@ -15,6 +15,12 @@ This app will map volumated measure files (i.e. tensor, NODDI, myelin) to the co
 [![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853)
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
 
+### References
+
+Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017
+
+Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage. 2013;80:105-124. doi:10.1016/j.neuroimage.2013.04.127
+
 ## Running the App 
 
 ### On Brainlife.io
@@ -79,11 +85,7 @@ This App requires the following libraries when run locally.
 
   - singularity: https://singularity.lbl.gov/
   - FSL: https://hub.docker.com/r/brainlife/fsl/tags/5.0.9
+  - Freesurfer: https://hub.docker.com/r/brainlife/freesurfer/tags/6.0.0
   - jsonlab: https://github.com/fangq/jsonlab.git
   - Connectome Workbench: https://hub.docker.com/r/brainlife/connectome_workbench
   
-### References
-
-Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017
-
-Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage. 2013;80:105-124. doi:10.1016/j.neuroimage.2013.04.127
