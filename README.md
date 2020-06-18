@@ -1,5 +1,5 @@
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.159-blue.svg)](https://doi.org/10.25663/brainlife.app.159)
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.379-blue.svg)](https://doi.org/10.25663/brainlife.app.379)
 
 # app-cortex-tissue-mapping
 This app will map volumated measure files (i.e. tensor, NODDI, myelin) to the cortical surface following procedures outlined in Fukutomi et al (2018; 10.1016/j.neuroimage.2018.02.017) using Connectome Workbench and the minimal preprocessing pipeline of the Human Connectome Project (2013; 10.1016/j.neuroimage.2013.04.127). Specifically, this app generates a mid-thickness surface (i.e. the mid-distance spline between the cortical and pial surfaces) and maps measures to this surface. This surface can be in native space, or, if a warp to a template space is provided, template space. This app needs for inputs: DWI, measure volume files (i.e. tensor, NODDI), freesurfer, and an optional brainmask. If a template surface is requested, the user must input a warp datatype with the warp and inverse warp niftis. See "FSL Anat" for an app that generates these warp files. This app outputs a cortexmap datatype, which contains three folders: func (contains mapped measures to surface), surf (contains all surface derivatives generated, including midthickness surface), and label (contains aparc.a2009s.aseg label niftis). The output surfaces and functional measures can be viewed using the Connectome Workbench viewer.
@@ -27,7 +27,7 @@ Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelin
 
 ### On Brainlife.io
 
-You can submit this App online at [https://doi.org/10.25663/brainlife.app.159](https://doi.org/10.25663/bl.app.159) via the "Execute" tab.
+You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](https://doi.org/10.25663/bl.app.159) via the "Execute" tab.
 
 ### Running Locally (on your machine)
 
