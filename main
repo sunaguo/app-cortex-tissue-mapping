@@ -15,6 +15,6 @@ if [ ! -f snr.nii.gz ]; then
 fi
 
 echo "mapping measures to cortical surface"
-time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.4.2-freesurfer-update ./cortex-mapping-pipeline.sh
+time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.4.2-b ./cortex-mapping-pipeline.sh
 
 mv *.nii.gz c_ras.mat ./metric/ ./raw/
