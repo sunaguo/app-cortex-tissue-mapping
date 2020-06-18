@@ -2,7 +2,7 @@
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.159-blue.svg)](https://doi.org/10.25663/brainlife.app.159)
 
 # app-cortex-tissue-mapping
-This app will map volumated measure files (i.e. tensor, NODDI) to the cortical surface following Fukutomi et al (2018; 10.1016/j.neuroimage.2018.02.017) using Connectome Workbench. This app needs for inputs: DWI, measure volume files (i.e. tensor (optional), NODDI (optional)), freesurfer, and a smoothing sigma value. This app outputs a cortexmap datatype, which contains three folders: func (contains mapped measures to surface), surf (contains all surface derivatives generated, including midthickness surface), and label (contains aparc.a2009s.aseg label niftis). 
+This app will map volumated measure files (i.e. tensor, NODDI, myelin) to the cortical surface following procedures outlined in Fukutomi et al (2018; 10.1016/j.neuroimage.2018.02.017) using Connectome Workbench and the minimal preprocessing pipeline of the Human Connectome Project (2013; 10.1016/j.neuroimage.2013.04.127). Specifically, this app generates a mid-thickness surface (i.e. the mid-distance spline between the cortical and pial surfaces) and maps measures to this surface. This surface can be in native space, or, if a warp to a template space is provided, template space. This app needs for inputs: DWI, measure volume files (i.e. tensor, NODDI), freesurfer, and an optional brainmask. If a template surface is requested, the user must input a warp datatype with the warp and inverse warp niftis. See "FSL Anat" for an app that generates these warp files. This app outputs a cortexmap datatype, which contains three folders: func (contains mapped measures to surface), surf (contains all surface derivatives generated, including midthickness surface), and label (contains aparc.a2009s.aseg label niftis). The output surfaces and functional measures can be viewed using the Connectome Workbench viewer.
 
 ### Authors
 - Brad Caron (bacaron@iu.edu)
@@ -39,7 +39,9 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.159](h
         "icvf": "null",
         "isovf": "null",
         "od": "null",
-        "sigma":  "5/3"
+        "brainmask":  "null",
+        "warp": "null",
+        "inverse_warp": "null"
 }
 ```
 
@@ -83,3 +85,5 @@ This App requires the following libraries when run locally.
 ### References
 
 Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017
+
+Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage. 2013;80:105-124. doi:10.1016/j.neuroimage.2013.04.127
