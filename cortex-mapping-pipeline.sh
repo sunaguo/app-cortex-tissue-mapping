@@ -6,7 +6,7 @@ set -x
 set -e
 
 #### Set cores ####
-export OMP_NUM_THREADS=8
+OMP_NUM_THREADS=8
 
 #### make directory and copy metric files to folder ####
 echo "making directories"
