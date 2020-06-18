@@ -27,7 +27,7 @@ Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelin
 
 ### On Brainlife.io
 
-You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](https://doi.org/10.25663/bl.app.159) via the "Execute" tab.
+You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](https://doi.org/10.25663/bl.app.379) via the "Execute" tab.
 
 ### Running Locally (on your machine)
 
