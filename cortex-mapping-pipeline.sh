@@ -88,7 +88,7 @@ for i in ${METRIC}
 	done
 echo "diffusion data copied"
 
-#### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
+#### find c_ras offset between freesurfer space and volume space. See HCP pipeline for more reference ####
 if [ ! -f c_ras.mat ]; then
 	echo "identifying transform between freesurfer and anat space"
 	MatrixXYZ=`mri_info --cras ${freesurfer}/mri/brain.finalsurfs.mgz`
