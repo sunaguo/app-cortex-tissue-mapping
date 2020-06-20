@@ -270,7 +270,7 @@ do
 			wb_command -gifti-label-add-prefix \
 				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				"${hemi}_" \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 		fi
 done
 echo "surface files generated"
