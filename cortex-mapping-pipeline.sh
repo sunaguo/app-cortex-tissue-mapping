@@ -31,7 +31,7 @@ isovf=`jq -r '.isovf' config.json`
 odi=`jq -r '.odi' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
-fsurfparc=`jq -r '.parc' config.json`
+fsurfparc=`jq -r '.fsurfparc' config.json`
 echo "parsing inputs complete"
 
 # set sigmas
