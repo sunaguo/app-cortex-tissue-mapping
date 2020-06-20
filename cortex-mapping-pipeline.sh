@@ -303,7 +303,7 @@ do
 		# mask out non cortex
 		wb_command -metric-mask ${funcdir}/${hemi}.snr.func.gii \
 			${SPACES_DIR[0]}/${hemi}.roi.shape.gii \
-			./cortexmap/func/${hemi}.snr.func.gii
+			${funcdir}/${hemi}.snr.func.gii
 
 		# find "good" vertices (snr > 10)
 		wb_command -metric-math 'x>10' \
