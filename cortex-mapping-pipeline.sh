@@ -31,6 +31,7 @@ isovf=`jq -r '.isovf' config.json`
 odi=`jq -r '.odi' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
+fsurfparc=`jq -r '.parc' config.json`
 echo "parsing inputs complete"
 
 # set sigmas
@@ -289,25 +290,25 @@ do
 		fi
 
 		# set up aparc.a2009s labels
-		if [ ! -f ./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii ]; then
+		if [ ! -f ./cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
 			mris_convert --annot \
-				${freesurfer}/label/${hemi}.aparc.a2009s.annot \
+				${freesurfer}/label/${hemi}.${fsurfparc}.annot \
 				${freesurfer}/surf/${hemi}.pial \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii
 
 			wb_command -set-structure \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
 				${STRUCTURE}
 
 			wb_command -set-map-names \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
 				-map 1 \
 				"${hemi}"_aparc.a2009s
 
 			wb_command -gifti-label-add-prefix \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
 				"${hemi}_" \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii
 		fi
 done
 echo "surface files generated"
