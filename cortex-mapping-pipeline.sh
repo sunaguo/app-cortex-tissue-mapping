@@ -10,10 +10,10 @@ OMP_NUM_THREADS=8
 
 #### make directory and copy metric files to folder ####
 echo "making directories"
-mkdir cortexmap
+mkdir cortexmap ./cortexmap/cortexmap/
 mkdir metric
-mkdir ./cortexmap/label
-mkdir ./cortexmap/func
+mkdir ./cortexmap/cortexmap/label
+mkdir ./cortexmap/cortexmap/func
 mkdir raw
 echo "making directories complete"
 
@@ -52,10 +52,10 @@ echo "hemisphere labels set"
 echo "setting useful variables"
 if [[ ! ${warp} == 'null' ]]; then
 	SPACES="native mni"
-	SPACES_DIR=("./cortexmap/surf" "./cortexmap/surf/mni")
+	SPACES_DIR=("./cortexmap/cortexmap/surf" "./cortexmap/cortexmap/surf/mni")
 else
 	SPACES="native"
-	SPACES_DIR=("./cortexmap/surf/")
+	SPACES_DIR=("./cortexmap/cortexmap/surf/")
 fi
 
 for spaces in ${SPACES_DIR[*]}
@@ -63,7 +63,7 @@ do
 	mkdir -p ${spaces}
 done
 
-FUNC_DIR=("./cortexmap/func/")
+FUNC_DIR=("./cortexmap/cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
 echo "variables set"
 
@@ -293,21 +293,21 @@ do
 			mris_convert --annot \
 				${freesurfer}/label/${hemi}.aparc.a2009s.annot \
 				${freesurfer}/surf/${hemi}.pial \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 
 			wb_command -set-structure \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				${STRUCTURE}
 
 			wb_command -set-map-names \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				-map 1 \
 				"${hemi}"_aparc.a2009s
 
 			wb_command -gifti-label-add-prefix \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				"${hemi}_" \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 		fi
 done
 echo "surface files generated"
