@@ -10,10 +10,10 @@ OMP_NUM_THREADS=8
 
 #### make directory and copy metric files to folder ####
 echo "making directories"
-mkdir cortexmap cortexmap/cortexmap
+mkdir cortexmap
 mkdir metric
-mkdir ./cortexmap/cortexmap/label
-mkdir ./cortexmap/cortexmap/func
+mkdir ./cortexmap/label
+mkdir ./cortexmap/func
 mkdir raw
 echo "making directories complete"
 
@@ -52,10 +52,10 @@ echo "hemisphere labels set"
 echo "setting useful variables"
 if [[ ! ${warp} == 'null' ]]; then
 	SPACES="native mni"
-	SPACES_DIR=("./cortexmap/cortexmap/surf" "./cortexmap/cortexmap/surf/mni")
+	SPACES_DIR=("./cortexmap/surf" "./cortexmap/surf/mni")
 else
 	SPACES="native"
-	SPACES_DIR=("./cortexmap/cortexmap/surf/")
+	SPACES_DIR=("./cortexmap/surf/")
 fi
 
 for spaces in ${SPACES_DIR[*]}
@@ -63,7 +63,7 @@ do
 	mkdir -p ${spaces}
 done
 
-FUNC_DIR=("./cortexmap/cortexmap/func/")
+FUNC_DIR=("./cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
 echo "variables set"
 
@@ -88,7 +88,7 @@ for i in ${METRIC}
 	done
 echo "diffusion data copied"
 
-#### find c_ras offset between freesurfer space and volume space. See HCP pipeline for more reference ####
+#### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
 if [ ! -f c_ras.mat ]; then
 	echo "identifying transform between freesurfer and anat space"
 	MatrixXYZ=`mri_info --cras ${freesurfer}/mri/brain.finalsurfs.mgz`
@@ -190,6 +190,43 @@ do
 	        	-iterations-scale $NativeInflationScale
 	    done
 
+	    # volume-specific operations
+	    volume_name="volume.shape.gii"
+	    outdir=${SPACES_DIR[0]}
+	    if [ ! -f ${outdir}/${hemi}.${volume_name} ]; then
+	    	mris_convert -c ${freesurfer}/surf/${hemi}.volume \
+	    		${freesurfer}/surf/${hemi}.white \
+	    		${outdir}/${hemi}.${volume_name}
+
+			wb_command -set-structure ${outdir}/${hemi}.${volume_name} \
+				${STRUCTURE}
+
+			wb_command -set-map-names ${outdir}/${hemi}.${volume_name} \
+				-map 1 ${hemi}_Volume
+
+			wb_command -metric-palette ${outdir}/${hemi}.${volume_name} \
+				MODE_AUTO_SCALE_PERCENTAGE \
+				-pos-percent 2 98 \
+				-palette-name Gray_Interp \
+				-disp-pos true \
+				-disp-neg true \
+				-disp-zero true
+			
+			wb_command -metric-math "abs(volume)" \
+				${outdir}/${hemi}.${volume_name} \
+				-var volume \
+				${outdir}/${hemi}.${volume_name}
+
+			wb_command -metric-palette ${outdir}/${hemi}.${volume_name} \
+				MODE_AUTO_SCALE_PERCENTAGE \
+				-pos-percent 4 96 \
+				-interpolate true \
+				-palette-name videen_style \
+				-disp-pos true \
+				-disp-neg false \
+				-disp-zero false
+		fi
+
 		# thickness-specific operations
 		thickness_name="thickness.shape.gii"
 		outdir=${SPACES_DIR[0]}
@@ -252,25 +289,25 @@ do
 		fi
 
 		# set up aparc.a2009s labels
-		if [ ! -f ./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii ]; then
+		if [ ! -f ./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii ]; then
 			mris_convert --annot \
 				${freesurfer}/label/${hemi}.aparc.a2009s.annot \
 				${freesurfer}/surf/${hemi}.pial \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 
 			wb_command -set-structure \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				${STRUCTURE}
 
 			wb_command -set-map-names \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				-map 1 \
 				"${hemi}"_aparc.a2009s
 
 			wb_command -gifti-label-add-prefix \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				"${hemi}_" \
-				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 		fi
 done
 echo "surface files generated"
@@ -303,7 +340,7 @@ do
 		# mask out non cortex
 		wb_command -metric-mask ${funcdir}/${hemi}.snr.func.gii \
 			${SPACES_DIR[0]}/${hemi}.roi.shape.gii \
-			${funcdir}/${hemi}.snr.func.gii
+			./cortexmap/func/${hemi}.snr.func.gii
 
 		# find "good" vertices (snr > 10)
 		wb_command -metric-math 'x>10' \
