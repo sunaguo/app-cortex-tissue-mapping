@@ -290,7 +290,7 @@ do
 		fi
 
 		# set up aparc.a2009s labels
-		if [ ! -f ./cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
+		if [ ! -f ./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
 			mris_convert --annot \
 				${freesurfer}/label/${hemi}.${fsurfparc}.annot \
 				${freesurfer}/surf/${hemi}.pial \
@@ -341,7 +341,7 @@ do
 		# mask out non cortex
 		wb_command -metric-mask ${funcdir}/${hemi}.snr.func.gii \
 			${SPACES_DIR[0]}/${hemi}.roi.shape.gii \
-			./cortexmap/func/${hemi}.snr.func.gii
+			${funcdir}/${hemi}.snr.func.gii
 
 		# find "good" vertices (snr > 10)
 		wb_command -metric-math 'x>10' \
