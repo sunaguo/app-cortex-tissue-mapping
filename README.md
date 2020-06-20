@@ -51,7 +51,8 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](h
         "od": "null",
         "brainmask":  "null",
         "warp": "null",
-        "inverse_warp": "null"
+        "inverse_warp": "null",
+        "fsurfparc":    "aparc.a2009s"
 }
 ```
 
