@@ -252,23 +252,23 @@ do
 		fi
 
 		# set up aparc.a2009s labels
-		if [ ! -f ./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii ]; then
+		if [ ! -f ./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii ]; then
 			mris_convert --annot \
 				${freesurfer}/label/${hemi}.aparc.a2009s.annot \
 				${freesurfer}/surf/${hemi}.pial \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 
 			wb_command -set-structure \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				${STRUCTURE}
 
 			wb_command -set-map-names \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				-map 1 \
 				"${hemi}"_aparc.a2009s
 
 			wb_command -gifti-label-add-prefix \
-				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.aparc.a2009s.native.label.gii \
 				"${hemi}_" \
 				./cortexmap/label/${hemi}.aparc.a2009s.native.label.gii
 		fi
