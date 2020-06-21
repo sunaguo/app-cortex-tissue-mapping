@@ -13,11 +13,14 @@ The code for this app was adapted from HCP's PostFreesurfer pipeline (https://gi
 
 ### Contributors
 - Soichi Hayashi (hayashi@iu.edu)
-- Franco Pestilli (franpest@indiana.edu)
+- Franco Pestilli (frakkopesto@gmail.com)
 
 ### Funding
 [![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853)
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
+[![NSF-AOC-1916518](https://img.shields.io/badge/NSF_AOC-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1916518)
+[![NSF-IIS-1916518](https://img.shields.io/badge/NSF_IIS-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1912270)
+[![NIH-NIBIB-R01EB029272-01](https://grantome.com/grant/NIH/R01-EB029272-01)
 
 ### References
 
