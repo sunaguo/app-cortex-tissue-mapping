@@ -26,6 +26,10 @@ fa=`jq -r '.fa' config.json`
 ad=`jq -r '.ad' config.json`
 md=`jq -r '.md' config.json`
 rd=`jq -r '.rd' config.json`
+ga=`jq -r '.ga' config.json`
+ak=`jq -r '.ak' config.json`
+mk=`jq -r '.mk' config.json`
+rk=`jq -r '.rk' config.json`
 ndi=`jq -r '.ndi' config.json`
 isovf=`jq -r '.isovf' config.json`
 odi=`jq -r '.odi' config.json`
@@ -73,10 +77,14 @@ echo "parsing input diffusion metrics"
 if [[ $fa == "null" ]];
 then
 	METRIC="ndi isovf odi"
-elif [[ $ndi == "null" ]]; then
+elif [[ $ndi == "null" ]] && [[ $ga == "null" ]]; then
 	METRIC="ad fa md rd"
-else
+elif [[ $ndi == "null" ]] && [[ ! $ga == "null" ]]; then
+	METRIC="ad fa md rd ga ak mk rk"
+elif [[ ! $fa == "null" ]] && [[ ! $ndi == "null" ]] && [[ $ga == "null" ]]; then
 	METRIC="ad fa md rd ndi isovf odi"
+else
+	METRIC="ad fa md rd ga ak mk rk ndi isovf odi"
 fi
 echo "input diffusion metrics set"
 
