@@ -77,8 +77,7 @@ echo "parsing input diffusion metrics"
 if [[ $fa == "null" ]];
 then
 	METRIC="ndi isovf odi"
-elif [[ $ndi == "null" ]] && [ ! -f $ga == "null" ]
-; then
+elif [[ $ndi == "null" ]] && [ ! -f $ga == "null" ]; then
 	METRIC="ad fa md rd"
 elif [[ $ndi == "null" ]] && [ -f $ga ]; then
 	METRIC="ad fa md rd ga ak mk rk"
