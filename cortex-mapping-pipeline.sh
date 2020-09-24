@@ -22,17 +22,18 @@ echo "making directories complete"
 echo "parsing inputs"
 freesurfer=`jq -r '.freesurfer' config.json`
 dwi=`jq -r '.dwi' config.json`
-fa=`jq -r '.fa' config.json`
-ad=`jq -r '.ad' config.json`
-md=`jq -r '.md' config.json`
-rd=`jq -r '.rd' config.json`
-ga=`jq -r '.ga' config.json`
-ak=`jq -r '.ak' config.json`
-mk=`jq -r '.mk' config.json`
-rk=`jq -r '.rk' config.json`
-ndi=`jq -r '.ndi' config.json`
-isovf=`jq -r '.isovf' config.json`
-odi=`jq -r '.odi' config.json`
+gmd="gmd.nii.gz"
+# fa=`jq -r '.fa' config.json`
+# ad=`jq -r '.ad' config.json`
+# md=`jq -r '.md' config.json`
+# rd=`jq -r '.rd' config.json`
+# ga=`jq -r '.ga' config.json`
+# ak=`jq -r '.ak' config.json`
+# mk=`jq -r '.mk' config.json`
+# rk=`jq -r '.rk' config.json`
+# ndi=`jq -r '.ndi' config.json`
+# isovf=`jq -r '.isovf' config.json`
+# odi=`jq -r '.odi' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
@@ -74,27 +75,29 @@ echo "variables set"
 
 # parse whether dti and NODDI are included or not
 echo "parsing input diffusion metrics"
-if [[ $fa == "null" ]];
-then
-	METRIC="ndi isovf odi"
-elif [[ $ndi == "null" ]] && [ ! -f $ga ]; then
-	METRIC="ad fa md rd"
-elif [[ $ndi == "null" ]] && [ -f $ga ]; then
-	METRIC="ad fa md rd ga ak mk rk"
-elif [ -f $fa ] && [ -f $ndi ] && [ ! -f $ga ]; then
-	METRIC="ad fa md rd ndi isovf odi"
-else
-	METRIC="ad fa md rd ga ak mk rk ndi isovf odi"
-fi
+# if [[ $fa == "null" ]];
+# then
+# 	METRIC="ndi isovf odi"
+# elif [[ $ndi == "null" ]] && [ ! -f $ga ]; then
+# 	METRIC="ad fa md rd"
+# elif [[ $ndi == "null" ]] && [ -f $ga ]; then
+# 	METRIC="ad fa md rd ga ak mk rk"
+# elif [ -f $fa ] && [ -f $ndi ] && [ ! -f $ga ]; then
+# 	METRIC="ad fa md rd ndi isovf odi"
+# else
+# 	METRIC="ad fa md rd ga ak mk rk ndi isovf odi"
+# fi
+METRIC="gmd"
 echo "input diffusion metrics set"
 
 #### copy diffusion measures to temporary folder for ease ####
 echo "copying over diffusion metric data"
-for i in ${METRIC}
-	do
-		ii=$(eval "echo \$${i}")
-		[ ! -f ./metric/${i}.nii.gz ] && cp -v "${ii}" ./metric/
-	done
+# for i in ${METRIC}
+# 	do
+# 		ii=$(eval "echo \$${i}")
+# 		[ ! -f ./metric/${i}.nii.gz ] && cp -v "${ii}" ./metric/
+# 	done
+cp -v ${gmd} ./metric/
 echo "diffusion data copied"
 
 #### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
