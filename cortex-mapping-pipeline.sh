@@ -36,6 +36,7 @@ odi=`jq -r '.odi' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
+mask_snr=`jq -r '.snr' config.json`
 echo "parsing inputs complete"
 
 # set sigmas
@@ -321,66 +322,68 @@ do
 done
 echo "surface files generated"
 
-#### SNR surface mapping ####
-# reslice snr to ribbon
-echo "moving snr image to ribbon space"
-[ ! -f ./snr_ribbon.nii.gz ] && mri_vol2vol --mov snr.nii.gz \
-	--targ ${SPACES_DIR[0]}/ribbon.nii.gz \
-	--regheader \
-	--o ./snr_ribbon.nii.gz
-echo "snr image in ribbon space"
+if [[ ${mask_snr} == true ]]; then
+	#### SNR surface mapping ####
+	# reslice snr to ribbon
+	echo "moving snr image to ribbon space"
+	[ ! -f ./snr_ribbon.nii.gz ] && mri_vol2vol --mov snr.nii.gz \
+		--targ ${SPACES_DIR[0]}/ribbon.nii.gz \
+		--regheader \
+		--o ./snr_ribbon.nii.gz
+	echo "snr image in ribbon space"
 
-echo "looping through hemispheres and mapping snr"
-for hemi in ${HEMI}
-do
-	snr_data="snr_ribbon.nii.gz"
-	outdir=${SPACES_DIR[0]}
-	funcdir=${FUNC_DIR[0]}
+	echo "looping through hemispheres and mapping snr"
+	for hemi in ${HEMI}
+	do
+		snr_data="snr_ribbon.nii.gz"
+		outdir=${SPACES_DIR[0]}
+		funcdir=${FUNC_DIR[0]}
 
-	# map snr
-	if [ ! -f ${funcdir}/${hemi}.snr.func.gii ]; then
-		wb_command -volume-to-surface-mapping ${snr_data} \
-			$outdir/${hemi}.midthickness.native.surf.gii \
-			${funcdir}/${hemi}.snr.func.gii \
-			-myelin-style ribbon_${hemi}.nii.gz \
-			$outdir/${hemi}.thickness.shape.gii \
-			"$MappingSigma"
+		# map snr
+		if [ ! -f ${funcdir}/${hemi}.snr.func.gii ]; then
+			wb_command -volume-to-surface-mapping ${snr_data} \
+				$outdir/${hemi}.midthickness.native.surf.gii \
+				${funcdir}/${hemi}.snr.func.gii \
+				-myelin-style ribbon_${hemi}.nii.gz \
+				$outdir/${hemi}.thickness.shape.gii \
+				"$MappingSigma"
 
-		# mask out non cortex
-		wb_command -metric-mask ${funcdir}/${hemi}.snr.func.gii \
-			${SPACES_DIR[0]}/${hemi}.roi.shape.gii \
-			${funcdir}/${hemi}.snr.func.gii
+			# mask out non cortex
+			wb_command -metric-mask ${funcdir}/${hemi}.snr.func.gii \
+				${SPACES_DIR[0]}/${hemi}.roi.shape.gii \
+				${funcdir}/${hemi}.snr.func.gii
 
-		# find "good" vertices (snr > 10)
-		wb_command -metric-math 'x>10' \
-			${funcdir}/${hemi}.goodvertex.func.gii \
-			-var x \
-			${funcdir}/${hemi}.snr.func.gii
+			# find "good" vertices (snr > 10)
+			wb_command -metric-math 'x>10' \
+				${funcdir}/${hemi}.goodvertex.func.gii \
+				-var x \
+				${funcdir}/${hemi}.snr.func.gii
 
-		# set map name and pallete
-		wb_command -set-map-names ${funcdir}/${hemi}.snr.func.gii \
-			-map 1 \
-			"$hemi"_"$vol"
+			# set map name and pallete
+			wb_command -set-map-names ${funcdir}/${hemi}.snr.func.gii \
+				-map 1 \
+				"$hemi"_"$vol"
 
-		wb_command -metric-palette ${funcdir}/${hemi}.snr.func.gii \
-			MODE_AUTO_SCALE_PERCENTAGE \
-			-pos-percent 2 98 \
-			-interpolate true \
-			-palette-name videen_style \
-			-disp-pos true \
-			-disp-neg false \
-			-disp-zero false
-	fi
+			wb_command -metric-palette ${funcdir}/${hemi}.snr.func.gii \
+				MODE_AUTO_SCALE_PERCENTAGE \
+				-pos-percent 2 98 \
+				-interpolate true \
+				-palette-name videen_style \
+				-disp-pos true \
+				-disp-neg false \
+				-disp-zero false
+		fi
 
-	# error out if snr not mapped
-	if [ -f ${funcdir}/${hemi}.snr.func.gii ]; then
-		echo "${hemi} snr mapped"
-	else
-		echo "${hemi} snr failed. check logs"
-		exit 1
-	fi
-done
-echo "snr mapped to cortex"
+		# error out if snr not mapped
+		if [ -f ${funcdir}/${hemi}.snr.func.gii ]; then
+			echo "${hemi} snr mapped"
+		else
+			echo "${hemi} snr failed. check logs"
+			exit 1
+		fi
+	done
+	echo "snr mapped to cortex"
+fi
 
 #### metric surface mapping ####
 echo "looping through diffusion metrics and mapping to cortex"
@@ -409,9 +412,11 @@ do
 				"$MappingSigma"
 
 			# mask surface by good vertices
-			wb_command -metric-mask ${funcdir}/${hemi}.${vol}.func.gii \
-				${funcdir}/${hemi}.goodvertex.func.gii \
-				${funcdir}/${hemi}.${vol}.func.gii
+			if [[ ${mask_snr} == true ]]; then
+				wb_command -metric-mask ${funcdir}/${hemi}.${vol}.func.gii \
+					${funcdir}/${hemi}.goodvertex.func.gii \
+					${funcdir}/${hemi}.${vol}.func.gii
+			fi
 
 			# dilate surface
 			wb_command -metric-dilate ${funcdir}/${hemi}.${vol}.func.gii \
