@@ -138,10 +138,19 @@ do
         ./cortexmap/surf/${hemi}.midthickness.native.surf.gii
 done
 
+# add resample vertices as datatype tag
+product=""
+product="\"cortexmap\": {\"datatype_tags\": [ \"$resamp_surf\"] }, $product"
+cat << EOF > product.json
+{
+    $product
+}
+EOF
+
 # file check
 func_files=(${func_files})
 num_files=`echo ${#func_files[@]}`
-if [ ! -f ${func_files[$num_files-1]} ]; then
+if [ ! -f ./cortexmap/func/${func_files[$num_files-1]} ]; then
     echo "something went wrong. check derivatives and logs"
     exit 1
 else
