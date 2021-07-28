@@ -1,0 +1,5 @@
+{
+	"cortexmap":	"/testdata/cortexmap",
+	"freesurfer":	"/testdata/output",
+	"resample_surf":	"164k"
+}
