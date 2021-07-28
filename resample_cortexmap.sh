@@ -140,7 +140,7 @@ done
 
 # add resample vertices as datatype tag
 product=""
-product="\"cortexmap\": {\"tags\": [ \"$resamp_surf\" ]}, $product"
+product="\"tags\": [ \"$resamp_surf\" ]"
 cat << EOF > product.json
 {
     $product
