@@ -74,9 +74,8 @@ func_files=(${func_files})
 num_files=`echo ${#func_files[@]}`
 if [ ! -f ./cortexmap/cortexmap/func/${func_files[$num_files-1]} ]; then
     echo "something went wrong. check derivatives and logs"
-    # exit 1
+    exit 1
 else
     echo "resampling complete"
-    # rm -rf ./tmp ./freesurfer *.gii
-    # exit 0
+    exit 0
 fi
