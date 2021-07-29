@@ -1,5 +1,7 @@
 {
-	"cortexmap":	"/testdata/cortexmap",
-	"freesurfer":	"/testdata/output",
-	"resample_surf":	"164k"
+    "inputs": [
+        "./testdata/subj01/cortexmap",
+        "./testdata/subj02/cortexmap",
+        "./testdata/subj03/cortexmap"
+    ]
 }
