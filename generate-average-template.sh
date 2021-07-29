@@ -67,6 +67,16 @@ do
             wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func} -var 'y' ${inputs[$i]}/func/${func}
         done
     fi
+
+    # update header info
+    wb_command -metric-palette ./cortexmap/cortexmap/func/${func} \
+        MODE_AUTO_SCALE_PERCENTAGE \
+        -pos-percent 4 96 \
+        -interpolate true \
+        -palette-name videen_style \
+        -disp-pos true \
+        -disp-neg false \
+        -disp-zero false
 done
 
 # file check
