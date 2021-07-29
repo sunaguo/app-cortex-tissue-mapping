@@ -15,7 +15,7 @@ atlases='./standard_mesh_atlases'
 [ ! -d ./freesurfer ] && cp -R ${freesurfer} ./freesurfer
 
 # make output directory
-[ ! -d ./cortexmap ] && mkdir -p cortexmap cortexmap/surf cortexmap/func cortexmap/label
+[ ! -d ./cortexmap ] && mkdir -p cortexmap cortexmap/cortexmap cortexmap/cortexmap/surf cortexmap/cortexmap/func cortexmap/cortexmap/label
 
 # copy over cortexmap data and make resampled directory
 cp -R ${cortexmap} ./tmp/
@@ -52,7 +52,7 @@ do
             ./${hemi}.sphere.reg.surf.gii \
             ${atlases}/resample_fsaverage/fs_LR-deformed_to-fsaverage.${wb_hemi}.sphere.${resamp_surf}_fs_LR.surf.gii \
             BARYCENTRIC \
-            ./cortexmap/surf/${i}
+            ./cortexmap/cortexmap/surf/${i}
     fi
 done
 
@@ -60,7 +60,7 @@ done
 if [ -d ./tmp/surf/mni ]; then
 
     mni_surf_files=`ls ./tmp/surf/mni/`
-    [ ! -d ./cortexmap/surf/mni ] && mkdir -p cortexmap/surf/mni
+    [ ! -d ./cortexmap/cortexmap/surf/mni ] && mkdir -p cortexmap/cortexmap/surf/mni
 
     for i in ${mni_surf_files}
     do
@@ -82,7 +82,7 @@ if [ -d ./tmp/surf/mni ]; then
                 ./${hemi}.sphere.reg.surf.gii \
                 ${atlases}/resample_fsaverage/fs_LR-deformed_to-fsaverage.${wb_hemi}.sphere.${resamp_surf}_fs_LR.surf.gii \
                 BARYCENTRIC \
-                ./cortexmap/surf/mni/${i}
+                ./cortexmap/cortexmap/surf/mni/${i}
         fi
     done
 fi
@@ -107,9 +107,9 @@ do
         ./${hemi}.sphere.reg.surf.gii \
         ${atlases}/resample_fsaverage/fs_LR-deformed_to-fsaverage.${wb_hemi}.sphere.${resamp_surf}_fs_LR.surf.gii \
         ADAP_BARY_AREA \
-        ./cortexmap/func/${i} \
+        ./cortexmap/cortexmap/func/${i} \
         -area-surfs ./tmp/surf/${hemi}.midthickness.native.surf.gii \
-        ./cortexmap/surf/${hemi}.midthickness.native.surf.gii
+        ./cortexmap/cortexmap/surf/${hemi}.midthickness.native.surf.gii
 
 done
 
@@ -133,9 +133,9 @@ do
         ./${hemi}.sphere.reg.surf.gii \
         ${atlases}/resample_fsaverage/fs_LR-deformed_to-fsaverage.${wb_hemi}.sphere.${resamp_surf}_fs_LR.surf.gii \
         ADAP_BARY_AREA \
-        ./cortexmap/label/${i} \
+        ./cortexmap/cortexmap/label/${i} \
         -area-surfs ./tmp/surf/${hemi}.midthickness.native.surf.gii \
-        ./cortexmap/surf/${hemi}.midthickness.native.surf.gii
+        ./cortexmap/cortexmap/surf/${hemi}.midthickness.native.surf.gii
 done
 
 # add resample vertices as datatype tag
@@ -150,7 +150,7 @@ EOF
 # file check
 func_files=(${func_files})
 num_files=`echo ${#func_files[@]}`
-if [ ! -f ./cortexmap/func/${func_files[$num_files-1]} ]; then
+if [ ! -f ./cortexmap/cortexmap/func/${func_files[$num_files-1]} ]; then
     echo "something went wrong. check derivatives and logs"
     exit 1
 else
