@@ -21,7 +21,14 @@ echo "making directories complete"
 # parse inputs
 echo "parsing inputs"
 freesurfer=`jq -r '.freesurfer' config.json`
-myelinmap=`jq -r '.myelinmap' config.json`
+T1=`jq -r '.T1' config.json`
+R1=`jq -r '.R1' config.json`
+M0=`jq -r '.M0' config.json`
+PD=`jq -r '.PD' config.json`
+MTV=`jq -r '.MTV' config.json`
+VIP=`jq -r '.VIP' config.json`
+SIR=`jq -r '.SIR' config.json`
+WF=`jq -r '.WF' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
@@ -61,15 +68,26 @@ FUNC_DIR=("./cortexmap/cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
 echo "variables set"
 
-# parse whether dti and NODDI are included or not
-echo "parsing input diffusion metrics"
-METRIC="myelinmap"
+# parse whether qmri are included or not
+echo "parsing input qmri metrics"
+METRIC=""
+for i in ${qmri}
+do
+	met_tmp=$(eval "echo \$${i}")
+	if [ -f ${met_tmp} ]; then
+		METRIC=${METRIC}" $i"
+	fi
+done
 echo "input diffusion metrics set"
 
 #### copy diffusion measures to temporary folder for ease ####
-echo "copying over diffusion metric data"
-cp -v ${myelinmap} ./metric/${METRIC}.nii.gz
-echo "diffusion data copied"
+echo "copying over qmri data"
+for i in ${METRIC}
+do
+	met_tmp=$(eval "echo \$${i}")
+	cp -v ${met_tmp} ./metric/${i}.nii.gz
+done
+echo "qmri data copied"
 
 #### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
 if [ ! -f c_ras.mat ]; then
