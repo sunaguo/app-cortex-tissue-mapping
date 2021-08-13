@@ -30,7 +30,8 @@ echo "parsing inputs complete"
 # set sigmas
 echo "calculating sigma to use from dwi dimensions"
 diffRes="`fslval ${dwi} pixdim1 | awk '{printf "%0.2f",$1}'`"
-MappingFWHM="` echo "2 * 2.5" | bc -l`"
+#MappingFWHM="` echo "2 * 2.5" | bc -l`"
+MappingFWHM="1" # this matches Shahms et al 2019
 MappingSigma=` echo "$MappingFWHM / ( 2 * ( sqrt ( 2 * l ( 2 ) ) ) )" | bc -l`
 SmoothingFWHM=4
 SmoothingSigma=` echo "$SmoothingFWHM / ( 2 * ( sqrt ( 2 * l ( 2 ) ) ) )" | bc -l`
