@@ -34,7 +34,7 @@ do
         echo "surface - ${surf}"
 
         # average first two files
-        wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/surf/${func} -var 'x' ${inputs[0]}/surf/${surf} -var 'y' ${inputs[1]}/surf/${surf}
+        wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/surf/${surf} -var 'x' ${inputs[0]}/surf/${surf} -var 'y' ${inputs[1]}/surf/${surf}
 
         if [ ${num_inputs} -gt 2 ]; then
             for (( i=2; i<${num_inputs}; i++ ))
