@@ -30,6 +30,28 @@ do
         done
 
         wb_command -surface-average ./cortexmap/cortexmap/surf/${surf} ${tmp_command}
+    elif [[ ${surf} == *".shape.gii" ]]; then
+        echo "surface - ${surf}"
+
+        # average first two files
+        wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/surf/${func} -var 'x' ${inputs[0]}/surf/${surf} -var 'y' ${inputs[1]}/surf/${surf}
+
+        if [ ${num_inputs} -gt 2 ]; then
+            for (( i=2; i<${num_inputs}; i++ ))
+            do 
+                wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/surf/${surf} -var 'x' ./cortexmap/cortexmap/surf/${surf} -var 'y' ${inputs[$i]}/surf/${surf}
+            done
+        fi
+
+        # update header info
+        wb_command -metric-palette ./cortexmap/cortexmap/surf/${surf} \
+            MODE_AUTO_SCALE_PERCENTAGE \
+            -pos-percent 4 96 \
+            -interpolate true \
+            -palette-name videen_style \
+            -disp-pos true \
+            -disp-neg false \
+            -disp-zero false
     fi
 done
 
