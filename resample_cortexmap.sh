@@ -34,17 +34,17 @@ label_files=`ls tmp/label/`
 # resample surfaces
 for i in ${surf_files}
 do
+    # see what hemisphere this belongs to
+    if [[ ${i} == *"lh"* ]]; then
+        hemi="lh"
+        wb_hemi="L"
+    else
+        hemi="rh"
+        wb_hemi="R"
+    fi
+
     if [[ ${i} == *".surf.gii" ]]; then
     	echo "resampling ${i}"
-
-        # see what hemisphere this belongs to
-        if [[ ${i} == *"lh"* ]]; then
-            hemi="lh"
-            wb_hemi="L"
-        else
-            hemi="rh"
-            wb_hemi="R"
-        fi
 
         # resample surface
     	wb_command -surface-resample \
@@ -53,6 +53,18 @@ do
             ${atlases}/resample_fsaverage/fs_LR-deformed_to-fsaverage.${wb_hemi}.sphere.${resamp_surf}_fs_LR.surf.gii \
             BARYCENTRIC \
             ./cortexmap/cortexmap/surf/${i}
+    elif [[ ${i} == *".shape.gii" ]]; then
+        echo "resampling ${i}"
+
+        # resample metric
+        wb_command -metric-resample \
+            ./tmp/surf/${i} \
+            ./${hemi}.sphere.reg.surf.gii \
+            ${atlases}/resample_fsaverage/fs_LR-deformed_to-fsaverage.${wb_hemi}.sphere.${resamp_surf}_fs_LR.surf.gii \
+            ADAP_BARY_AREA \
+            ./cortexmap/cortexmap/surf/${i} \
+            -area-surfs ./tmp/surf/${hemi}.midthickness.native.surf.gii \
+            ./cortexmap/cortexmap/surf/${hemi}.midthickness.native.surf.gii
     fi
 done
 
