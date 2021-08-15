@@ -3,6 +3,7 @@
 # set configurable inputs
 inputs=($(jq -r '.inputs' config.json  | tr -d '[]," '))
 threshold=`jq -r '.threshold' config.json`
+dilate=`jq -r '.dilate' config.json`
 
 # identify number of inputs
 num_inputs=`echo ${#inputs[@]}`
@@ -88,6 +89,10 @@ do
     # merge all labels together
     first_line="-label ${inputs[0]}/label/${labs} -column 1"
     second_line=" -label ${inputs[1]}/label/${labs}"
+    label_name=`echo ${labs%%.label.gii}`
+    if [[ ${label_name} == *".native" ]]; then
+        label_name=`echo ${label_name%%.native}`
+    fi
     
     if [ ${num_inputs} -gt 2 ]; then
         for (( i=2; i<${num_inputs}; i++ ))
@@ -96,48 +101,48 @@ do
         done
     fi
 
-    wb_command -label-merge ./${labs%%.native.label.gii}.merged.label.gii ${first_line}${second_line}
+    wb_command -label-merge ./${label_name}.merged.label.gii ${first_line}${second_line}
 
     # compute probability
-    wb_command -label-probability ./${labs%%.native.label.gii}.merged.label.gii ./${labs%%.native.label.gii}.probability.func.gii -exclude-unlabeled
+    wb_command -label-probability ./${label_name}.merged.label.gii ./${label_name}.probability.func.gii -exclude-unlabeled
 
     # threshold
-    wb_command -metric-math "(x>${threshold})" ./${labs%%.native.label.gii}.mask.shape.gii -var 'x' ./${labs%%.native.label.gii}.probability.func.gii
+    wb_command -metric-math "(x>${threshold})" ./${label_name}.mask.shape.gii -var 'x' ./${label_name}.probability.func.gii
 
     # export label table so we can import
-    wb_command -label-export-table ${inputs[0]}/label/${labs} ./${labs%%.native.label.gii}.lut.txt
+    wb_command -label-export-table ${inputs[0]}/label/${labs} ./${label_name}.lut.txt
 
     # loop through roi names and multiply ROI binary by parcel ID value
-    names=(`wb_command -file-information ./${labs%%.native.label.gii}.mask.shape.gii -only-map-names`)
+    names=(`wb_command -file-information ./${label_name}.mask.shape.gii -only-map-names`)
     for (( i=0; i<${#names[@]}; i++ ))
     do 
-        wb_command -metric-math "x * (${i}+1)" ${labs%%.native.label.gii}.${names[$i]}.shape.gii -var 'x' ./${labs%%.native.label.gii}.mask.shape.gii -column ${names[$i]}
+        wb_command -metric-math "x * (${i}+1)" ${label_name}.${names[$i]}.shape.gii -var 'x' ./${label_name}.mask.shape.gii -column ${names[$i]}
     done
 
     # combine all rois to one file
     for (( i=0; i<${#names[@]}; i++ ))
     do 
         if [ ${i} -eq 0 ]; then 
-            wb_command -metric-math 'x + y' ${labs%%.native.label.gii}.merge.func.gii -var 'x' ${labs%%.native.label.gii}.${names[$i]}.shape.gii -var 'y' ${labs%%.native.label.gii}.${names[$((i+1))]}.shape.gii
+            wb_command -metric-math 'x + y' ${label_name}.merge.func.gii -var 'x' ${label_name}.${names[$i]}.shape.gii -var 'y' ${label_name}.${names[$((i+1))]}.shape.gii
         elif [ ${i} -eq 1 ]; then 
             echo "done"
         else 
-            wb_command -metric-math 'x + y' ${labs%%.native.label.gii}.merge.func.gii -var 'x' ${labs%%.native.label.gii}.merge.func.gii -var 'y' ${labs%%.native.label.gii}.${names[$i]}.shape.gii
+            wb_command -metric-math 'x + y' ${label_name}.merge.func.gii -var 'x' ${label_name}.merge.func.gii -var 'y' ${label_name}.${names[$i]}.shape.gii
         fi
     done
 
     # dilate merged average parcellation
     if [ -d ${inputs[0]}/surf/mni ]; then
-        wb_command -metric-dilate ${labs%%.native.label.gii}.merge.func.gii ${inputs[0]}/surf/mni/${labs%%.aparc*}.midthickness.mni.surf.gii 10 ${labs%%.native.label.gii}.merge.dilate.func.gii -nearest
+        wb_command -metric-dilate ${label_name}.merge.func.gii ${inputs[0]}/surf/mni/${labs%%.aparc*}.midthickness.mni.surf.gii ${dilate} ${label_name}.merge.dilate.func.gii -nearest
     else
-        wb_command -metric-dilate ${labs%%.native.label.gii}.merge.func.gii ${inputs[0]}/surf/${labs%%.aparc*}.midthickness.native.surf.gii 10 ${labs%%.native.label.gii}.merge.dilate.func.gii -nearest
+        wb_command -metric-dilate ${label_name}.merge.func.gii ${inputs[0]}/surf/${labs%%.aparc*}.midthickness.*.surf.gii ${dilate} ${label_name}.merge.dilate.func.gii -nearest
     fi
 
     # import lut table
-    wb_command -metric-label-import ${labs%%.native.label.gii}.merge.dilate.func.gii ./${labs%%.native.label.gii}.lut.txt ./cortexmap/cortexmap/label/${labs%%.native.label.gii}.group.label.gii
+    wb_command -metric-label-import ${label_name}.merge.dilate.func.gii ./${label_name}.lut.txt ./cortexmap/cortexmap/label/${label_name}.group.label.gii
     
     # set map name
-    wb_command -set-map-name ./cortexmap/cortexmap/label/${labs%%.native.label.gii}.group.label.gii 1 "${labs%%.native.label.gii}"
+    wb_command -set-map-name ./cortexmap/cortexmap/label/${label_name}.group.label.gii 1 "${label_name}"
 done
 
 # file check
