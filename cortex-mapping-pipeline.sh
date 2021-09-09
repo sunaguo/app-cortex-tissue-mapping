@@ -307,17 +307,19 @@ echo "surface files generated"
 echo "looping through endpoints and mapping to cortex"
 for vol in ${roi_names}
 do
+	vol_name=`echo ${vol%%.nii.gz}`
+
 	echo "mapping ${vol} to cortex"
 	[ ! -f ./metric/${vol}_ribbon.nii.gz ] && mri_vol2vol --mov ./rois/${vol} \
 		--targ ${SPACES_DIR[0]}/ribbon.nii.gz \
 		--regheader \
 		--interp nearest \
-		--o ./metric/${vol%%.nii.gz}_ribbon.nii.gz
+		--o ./metric/${vol_name}_ribbon.nii.gz
 
 	for hemi in ${HEMI}
 	do
 
-		vol_data="./metric/${vol}_ribbon.nii.gz"
+		vol_data="./metric/${vol%%.nii.gz}_ribbon.nii.gz"
 		outdir=${SPACES_DIR[0]}
 		funcdir=${FUNC_DIR[0]}
 
@@ -328,14 +330,14 @@ do
 				--surf white \
 				--projdist-max 0 6 0.1 \
 				--regheader "output" \
-				--o ${funcdir}/${hemi}.${vol%%.nii.gz}.func.gii
+				--o ${funcdir}/${hemi}.${vol_name}.func.gii
 
 			# set map name and pallete
-			wb_command -set-map-names ${funcdir}/${hemi}.${vol%%.nii.gz}.func.gii \
+			wb_command -set-map-names ${funcdir}/${hemi}.${vol_name}.func.gii \
 				-map 1 \
 				"$hemi"_"${vol%%.nii.gz}"
 
-			wb_command -metric-palette ${funcdir}/${hemi}.${vol%%.nii.gz}.func.gii \
+			wb_command -metric-palette ${funcdir}/${hemi}.${vol_name}.func.gii \
 				MODE_AUTO_SCALE_PERCENTAGE \
 				-pos-percent 0 100 \
 				-interpolate true \
@@ -346,10 +348,10 @@ do
 		fi
 
 		# fail out if map is not created
-		if [ -f ${funcdir}/${hemi}.${volvol%%.nii.gz}.func.gii ]; then
-			echo "${hemi} ${volvol%%.nii.gz} mapped to cortex"
+		if [ -f ${funcdir}/${hemi}.${vol_name}.func.gii ]; then
+			echo "${hemi} ${vol_name} mapped to cortex"
 		else
-			echo "${hemi} ${volvol%%.nii.gz} failed. check logs"
+			echo "${hemi} ${vol_name} failed. check logs"
 			exit 1
 		fi
 	done
