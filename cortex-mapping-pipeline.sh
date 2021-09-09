@@ -33,6 +33,7 @@ WF=`jq -r '.WF' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
+cortexmap=`jq -r '.cortexmap' config.json`
 echo "parsing inputs complete"
 
 # set qmri variable to loop through
@@ -54,6 +55,17 @@ HEMI="lh rh"
 CARETHemi="L R"
 echo "hemisphere labels set"
 
+# if cortexmap already exists, copy
+if [[ -f ${cortexmap}/surf/lh.midthickness.native.surf.gii ]]; then
+	cp -R ${cortexmap}/label/* ./cortexmap/cortexmap/label/
+	cp -R ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
+	cp -R ${cortexmap}/func/* ./cortexmap/cortexmap/func/
+	chmod -R +rw ./cortexmap
+	cmap_exist=1
+else
+	cmap_exist=0
+fi
+
 # set other variables for ease of scripting
 echo "setting useful variables"
 if [[ ! ${warp} == 'null' ]]; then
@@ -64,10 +76,12 @@ else
 	SPACES_DIR=("./cortexmap/cortexmap/surf/")
 fi
 
-for spaces in ${SPACES_DIR[*]}
-do
-	mkdir -p ${spaces}
-done
+if [[ ${cmap_exist} == 0 ]]; then
+	for spaces in ${SPACES_DIR[*]}
+	do
+		mkdir -p ${spaces}
+	done
+fi
 
 FUNC_DIR=("./cortexmap/cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
