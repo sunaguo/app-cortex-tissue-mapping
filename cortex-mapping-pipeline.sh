@@ -21,32 +21,12 @@ echo "making directories complete"
 # parse inputs
 echo "parsing inputs"
 freesurfer=`jq -r '.freesurfer' config.json`
-dwi=`jq -r '.dwi' config.json`
-fa=`jq -r '.fa' config.json`
-ad=`jq -r '.ad' config.json`
-md=`jq -r '.md' config.json`
-rd=`jq -r '.rd' config.json`
-ga=`jq -r '.ga' config.json`
-ak=`jq -r '.ak' config.json`
-mk=`jq -r '.mk' config.json`
-rk=`jq -r '.rk' config.json`
-ndi=`jq -r '.ndi' config.json`
-isovf=`jq -r '.isovf' config.json`
-odi=`jq -r '.odi' config.json`
+rois=`jq -r '.rois' config.json`
+cortexmap=`jq -r '.cortexmap' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
-mask_snr=`jq -r '.snr' config.json`
 echo "parsing inputs complete"
-
-# set sigmas
-echo "calculating sigma to use from dwi dimensions"
-diffRes="`fslval ${dwi} pixdim1 | awk '{printf "%0.2f",$1}'`"
-MappingFWHM="` echo "$diffRes * 2.5" | bc -l`"
-MappingSigma=` echo "$MappingFWHM / ( 2 * ( sqrt ( 2 * l ( 2 ) ) ) )" | bc -l`
-SmoothingFWHM=$diffRes
-SmoothingSigma=` echo "$SmoothingFWHM / ( 2 * ( sqrt ( 2 * l ( 2 ) ) ) )" | bc -l`
-echo "sigma set to ${MappingSigma}"
 
 # set hemisphere labels
 echo "set hemisphere labels"
@@ -54,6 +34,16 @@ HEMI="lh rh"
 CARETHemi="L R"
 echo "hemisphere labels set"
 
+# if cortexmap already exists, copy
+if [[ -f ${cortexmap}/surf/lh.midthickness.native.surf.gii ]]; then
+	cp -R ${cortexmap}/label/* ./cortexmap/cortexmap/label/
+	cp -R ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
+	cp -R ${cortexmap}/func/* ./cortexmap/cortexmap/func/
+	chmod -R +rw ./cortexmap
+	cmap_exist=1
+else
+	cmap_exist=0
+fi
 # set other variables for ease of scripting
 echo "setting useful variables"
 if [[ ! ${warp} == 'null' ]]; then
@@ -64,39 +54,30 @@ else
 	SPACES_DIR=("./cortexmap/cortexmap/surf/")
 fi
 
-for spaces in ${SPACES_DIR[*]}
-do
-	mkdir -p ${spaces}
-done
+if [[ ${cmap_exist} == 0 ]]; then
+	for spaces in ${SPACES_DIR[*]}
+	do
+		mkdir -p ${spaces}
+	done
+fi
 
 FUNC_DIR=("./cortexmap/cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
 echo "variables set"
 
-# parse whether dti and NODDI are included or not
-echo "parsing input diffusion metrics"
-if [[ $fa == "null" ]];
-then
-	METRIC="ndi isovf odi"
-elif [[ $ndi == "null" ]] && [ ! -f $ga ]; then
-	METRIC="ad fa md rd"
-elif [[ $ndi == "null" ]] && [ -f $ga ]; then
-	METRIC="ad fa md rd ga ak mk rk"
-elif [ -f $fa ] && [ -f $ndi ] && [ ! -f $ga ]; then
-	METRIC="ad fa md rd ndi isovf odi"
-else
-	METRIC="ad fa md rd ga ak mk rk ndi isovf odi"
+#### copy over rois; set roi_names
+if [[ ! -d ./rois ]]; then
+	cp -R ${rois} ./rois
+	chmod -R +rw ./rois
+	roi_names=(`ls ./rois/`)
 fi
-echo "input diffusion metrics set"
 
-#### copy diffusion measures to temporary folder for ease ####
-echo "copying over diffusion metric data"
-for i in ${METRIC}
-	do
-		ii=$(eval "echo \$${i}")
-		[ ! -f ./metric/${i}.nii.gz ] && cp -v "${ii}" ./metric/
-	done
-echo "diffusion data copied"
+#### copy over freesurfer
+if [[ ! -d ./output ]]; then
+	cp -R ${freesurfer} ./output
+	chmod -R +rw ./output
+	freesurfer='./output'
+fi
 
 #### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
 if [ ! -f c_ras.mat ]; then
@@ -322,78 +303,16 @@ do
 done
 echo "surface files generated"
 
-if [[ ${mask_snr} == true ]]; then
-	#### SNR surface mapping ####
-	# reslice snr to ribbon
-	echo "moving snr image to ribbon space"
-	[ ! -f ./snr_ribbon.nii.gz ] && mri_vol2vol --mov snr.nii.gz \
-		--targ ${SPACES_DIR[0]}/ribbon.nii.gz \
-		--regheader \
-		--o ./snr_ribbon.nii.gz
-	echo "snr image in ribbon space"
-
-	echo "looping through hemispheres and mapping snr"
-	for hemi in ${HEMI}
-	do
-		snr_data="snr_ribbon.nii.gz"
-		outdir=${SPACES_DIR[0]}
-		funcdir=${FUNC_DIR[0]}
-
-		# map snr
-		if [ ! -f ${funcdir}/${hemi}.snr.func.gii ]; then
-			wb_command -volume-to-surface-mapping ${snr_data} \
-				$outdir/${hemi}.midthickness.native.surf.gii \
-				${funcdir}/${hemi}.snr.func.gii \
-				-myelin-style ribbon_${hemi}.nii.gz \
-				$outdir/${hemi}.thickness.shape.gii \
-				"$MappingSigma"
-
-			# mask out non cortex
-			wb_command -metric-mask ${funcdir}/${hemi}.snr.func.gii \
-				${SPACES_DIR[0]}/${hemi}.roi.shape.gii \
-				${funcdir}/${hemi}.snr.func.gii
-
-			# find "good" vertices (snr > 10)
-			wb_command -metric-math 'x>10' \
-				${funcdir}/${hemi}.goodvertex.func.gii \
-				-var x \
-				${funcdir}/${hemi}.snr.func.gii
-
-			# set map name and pallete
-			wb_command -set-map-names ${funcdir}/${hemi}.snr.func.gii \
-				-map 1 \
-				"$hemi"_"$vol"
-
-			wb_command -metric-palette ${funcdir}/${hemi}.snr.func.gii \
-				MODE_AUTO_SCALE_PERCENTAGE \
-				-pos-percent 2 98 \
-				-interpolate true \
-				-palette-name videen_style \
-				-disp-pos true \
-				-disp-neg false \
-				-disp-zero false
-		fi
-
-		# error out if snr not mapped
-		if [ -f ${funcdir}/${hemi}.snr.func.gii ]; then
-			echo "${hemi} snr mapped"
-		else
-			echo "${hemi} snr failed. check logs"
-			exit 1
-		fi
-	done
-	echo "snr mapped to cortex"
-fi
-
 #### metric surface mapping ####
-echo "looping through diffusion metrics and mapping to cortex"
-for vol in ${METRIC}
+echo "looping through endpoints and mapping to cortex"
+for vol in ${roi_names}
 do
 	echo "mapping ${vol} to cortex"
-	[ ! -f ./metric/${vol}_ribbon.nii.gz ] && mri_vol2vol --mov ./metric/${vol}.nii.gz \
+	[ ! -f ./metric/${vol}_ribbon.nii.gz ] && mri_vol2vol --mov ./rois/${vol} \
 		--targ ${SPACES_DIR[0]}/ribbon.nii.gz \
 		--regheader \
-		--o ./metric/${vol}_ribbon.nii.gz
+		--interp nearest \
+		--o ./metric/${vol%%.nii.gz}_ribbon.nii.gz
 
 	for hemi in ${HEMI}
 	do
@@ -404,40 +323,21 @@ do
 
 		# map volumes to surface
 		if [ ! -f ${funcdir}/${hemi}.${vol}.func.gii ]; then
-			wb_command -volume-to-surface-mapping ${vol_data} \
-				${outdir}/${hemi}.midthickness.native.surf.gii \
-				${funcdir}/${hemi}.${vol}.func.gii \
-				-myelin-style ribbon_${hemi}.nii.gz \
-				${outdir}/${hemi}.thickness.shape.gii \
-				"$MappingSigma"
-
-			# mask surface by good vertices
-			if [[ ${mask_snr} == true ]]; then
-				wb_command -metric-mask ${funcdir}/${hemi}.${vol}.func.gii \
-					${funcdir}/${hemi}.goodvertex.func.gii \
-					${funcdir}/${hemi}.${vol}.func.gii
-			fi
-
-			# dilate surface
-			wb_command -metric-dilate ${funcdir}/${hemi}.${vol}.func.gii \
-				${outdir}/${hemi}.midthickness.native.surf.gii \
-				20 \
-				${funcdir}/${hemi}.${vol}.func.gii \
-				-nearest
-
-			# mask surface by roi.native.shape
-			wb_command -metric-mask ${funcdir}/${hemi}.${vol}.func.gii \
-				${outdir}/${hemi}.roi.shape.gii \
-				${funcdir}/${hemi}.${vol}.func.gii
+			mri_vol2surf --mov ${vol_data} \
+				--hemi ${hemi} \
+				--surf white \
+				--projdist-max 0 6 0.1 \
+				--regheader "output" \
+				--o ${funcdir}/${hemi}.${vol%%.nii.gz}.func.gii
 
 			# set map name and pallete
-			wb_command -set-map-names ${funcdir}/${hemi}.${vol}.func.gii \
+			wb_command -set-map-names ${funcdir}/${hemi}.${vol%%.nii.gz}.func.gii \
 				-map 1 \
-				"$hemi"_"$vol"
+				"$hemi"_"${vol%%.nii.gz}"
 
-			wb_command -metric-palette ${funcdir}/${hemi}.${vol}.func.gii \
+			wb_command -metric-palette ${funcdir}/${hemi}.${vol%%.nii.gz}.func.gii \
 				MODE_AUTO_SCALE_PERCENTAGE \
-				-pos-percent 4 96 \
+				-pos-percent 0 100 \
 				-interpolate true \
 				-palette-name videen_style \
 				-disp-pos true \
@@ -446,10 +346,10 @@ do
 		fi
 
 		# fail out if map is not created
-		if [ -f ${funcdir}/${hemi}.${vol}.func.gii ]; then
-			echo "${hemi} ${vol} mapped to cortex"
+		if [ -f ${funcdir}/${hemi}.${volvol%%.nii.gz}.func.gii ]; then
+			echo "${hemi} ${volvol%%.nii.gz} mapped to cortex"
 		else
-			echo "${hemi} ${vol} failed. check logs"
+			echo "${hemi} ${volvol%%.nii.gz} failed. check logs"
 			exit 1
 		fi
 	done
