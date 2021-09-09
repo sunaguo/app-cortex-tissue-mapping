@@ -37,6 +37,7 @@ gmd="gmd.nii.gz"
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
+cortexmap=`jq -r '.cortexmap' config.json`
 echo "parsing inputs complete"
 
 # set sigmas
@@ -47,6 +48,17 @@ MappingSigma=` echo "$MappingFWHM / ( 2 * ( sqrt ( 2 * l ( 2 ) ) ) )" | bc -l`
 SmoothingFWHM=$diffRes
 SmoothingSigma=` echo "$SmoothingFWHM / ( 2 * ( sqrt ( 2 * l ( 2 ) ) ) )" | bc -l`
 echo "sigma set to ${MappingSigma}"
+
+# if cortexmap already exists, copy
+if [[ -f ${cortexmap}/surf/lh.midthickness.native.surf.gii ]]; then
+	cp -R ${cortexmap}/label/* ./cortexmap/cortexmap/label/
+	cp -R ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
+	cp -R ${cortexmap}/func/* ./cortexmap/cortexmap/func/
+	chmod -R +rw ./cortexmap
+	cmap_exist=1
+else
+	cmap_exist=0
+fi
 
 # set hemisphere labels
 echo "set hemisphere labels"
@@ -64,10 +76,12 @@ else
 	SPACES_DIR=("./cortexmap/cortexmap/surf/")
 fi
 
-for spaces in ${SPACES_DIR[*]}
-do
-	mkdir -p ${spaces}
-done
+if [[ ${cmap_exist} == 0 ]]; then
+	for spaces in ${SPACES_DIR[*]}
+	do
+		mkdir -p ${spaces}
+	done
+fi
 
 FUNC_DIR=("./cortexmap/cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"

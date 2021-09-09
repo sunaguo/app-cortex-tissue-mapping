@@ -18,6 +18,6 @@ echo "extracting density map from 5tt"
 time singularity exec -e docker://brainlife/mrtrix3:3.0.0 ./extract_gmd.sh
 
 echo "mapping measures to cortical surface"
-time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.4.2b ./cortex-mapping-pipeline.sh
+time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.5.0 ./cortex-mapping-pipeline.sh
 
 mv *.nii.gz c_ras.mat ./metric/ ./raw/
