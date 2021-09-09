@@ -2,8 +2,8 @@
 
 ## This script will create a midthickness surface, map tensor and NODDI values to this surface, and compute stats for each ROI from Freesurfer parcellation
 
-# set -x
-# set -e
+set -x
+set -e
 
 #### Set cores ####
 OMP_NUM_THREADS=8
@@ -277,8 +277,8 @@ echo "surface files generated"
 
 if [ ! -f ./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
 	echo "cortexmap structure generation complete"
-	# exit 0
+	exit 0
 else
 	echo "something went wrong. check derivatives and logs"
-	# exit 1
+	exit 1
 fi
