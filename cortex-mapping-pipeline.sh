@@ -103,6 +103,9 @@ echo "converting ribbon files"
 [ ! -f ./ribbon_rh.nii.gz ] && fslmaths ${SPACES_DIR[0]}/ribbon.nii.gz -thr 42 -uthr 42 -bin ./ribbon_rh.nii.gz
 echo "converting ribbon files complete"
 
+
+export SUBJECTS_DIR=./
+
 # hemisphere ribbon and surfaces (obtained directly from HCP PostFreesurfer pipeline and amended for BL: https://github.com/Washington-University/HCPpipelines/blob/master/PostFreeSurfer/scripts/FreeSurfer2CaretConvertAndRegisterNonlinear.sh)
 echo "looping through hemispheres and creating appropriate surface files"
 for hemi in $HEMI
