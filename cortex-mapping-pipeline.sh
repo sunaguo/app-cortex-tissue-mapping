@@ -319,6 +319,22 @@ do
 		--interp nearest \
 		--o ./metric/${vol_name}_ribbon.nii.gz
 
+	# fslmaths ./metric/${vol%%.nii.gz}_ribbon.nii.gz -mul ribbon_lh.nii.gz -bin lh.nii.gz
+	# fslmaths ./metric/${vol%%.nii.gz}_ribbon.nii.gz -mul ribbon_rh.nii.gz -bin rh.nii.gz
+	# lh_vol=(`fslstats lh.nii.gz -V`)
+	# rh_vol=(`fslstats rh.nii.gz -V`)
+
+	# if [[ ${lh_vol} -gt 0 && ${rh_vol} -gt 0 ]]; then
+	# 	if [[ ${lh_vol} -le $(( rh_vol+(rh_vol/10) )) && ${lh_vol} -ge $(( rh_vol-(rh_vol/10) )) ]];
+	# 	then
+	# 		hemis="lh rh"
+	# 	elif [[ ${lh_vol} -lt $(( rh_vol+(rh_vol/10) )) ]]; then
+	# 		hemis="rh"
+	# 	else
+	# 		hemis="lh"
+	# 	fi
+	# fi
+
 	for hemi in ${HEMI}
 	do
 		if [[ ${hemi} == 'lh' ]]; then
@@ -368,4 +384,30 @@ do
 			exit 1
 		fi
 	done
+	
+	# filter based on what should be left vs right hemisphere. get rid of other hemisphere files.
+	# need this as sometimes data can be mapped to the incorrect hemisphere
+	# need to make this better, but good enough for now
+	lh_file=${funcdir}/lh.${vol_name}.func.gii
+	rh_file=${funcdir}/rh.${vol_name}.func.gii
+	cnz_lh=`wb_command -metric-stats ${lh_file} -reduce COUNT_NONZERO`
+	cnz_rh=`wb_command -metric-stats ${rh_file} -reduce COUNT_NONZERO`
+	total_verts=`wb_command -file-information ${lh_file} -no-map-info | grep -nwi "Number of Vertices" | cut -f3 -d ':' | xargs`
+	if [[ ${cnz_lh} -gt 0 || ${cnz_rh} -gt 0 ]] && [[ $(( cnz_lh+cnz_rh )) -ge 10 ]]; then
+		if [[ "rh" in *"${vol_name}"* ]] || [[ "right" in *"${vol_name}"* ]] || [[ "RH" in *"${vol_name}"* ]] || [[ "RIGHT" in *"${vol_name}"* ]]; then 
+			echo "keeping right hemisphere"
+			rm -rf ${lh_file}
+		elif [[ "lh" in *"${vol_name}"* ]] || [[ "left" in *"${vol_name}"* ]] || [[ "LH" in *"${vol_name}"* ]] || [[ "LEFT" in *"${vol_name}"* ]]; then
+			echo "keeping left hemisphere"
+			rm -rf ${rh_file}
+		elif [[ ${cnz_lh} -le $(( cnz_rh+(cnz_rh/10) )) && ${cnz_lh} -ge $(( cnz_rh-(cnz_rh/10) )) ]]; then 
+			echo "keeping both hemispheres"
+		elif [[ ${cnz_lh} -lt ${cnz_rh} ]]
+			echo "keeping right hemisphere"
+			rm -rf ${lh_file}
+		else 
+			echo "keeping left hemisphere"
+			rm -rf ${rh_file}
+		fi
+	fi
 done
