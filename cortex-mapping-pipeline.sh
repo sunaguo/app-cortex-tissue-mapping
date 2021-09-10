@@ -86,7 +86,7 @@ if [[ ${cmap_exist} == 0 ]]; then
 	do
 		mkdir -p ${spaces}
 	done
-done
+fi
 
 FUNC_DIR=("./cortexmap/cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
