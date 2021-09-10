@@ -321,6 +321,11 @@ do
 
 	for hemi in ${HEMI}
 	do
+		if [[ ${hemi} == 'lh' ]]; then
+			STRUCTURE="CORTEX_LEFT"
+		else
+			STRUCTURE="CORTEX_RIGHT"
+		fi
 
 		vol_data="./metric/${vol%%.nii.gz}_ribbon.nii.gz"
 		outdir=${SPACES_DIR[0]}
@@ -334,6 +339,11 @@ do
 				--projdist-max 0 6 0.1 \
 				--regheader "output" \
 				--o ${funcdir}/${hemi}.${vol_name}.func.gii
+			
+			# set structure
+			wb_command -set-structure \
+				{funcdir}/${hemi}.${vol_name}.func.gii \
+				${STRUCTURE}
 
 			# set map name and pallete
 			wb_command -set-map-names ${funcdir}/${hemi}.${vol_name}.func.gii \
