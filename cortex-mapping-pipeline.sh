@@ -308,7 +308,7 @@ echo "surface files generated"
 
 #### metric surface mapping ####
 echo "looping through endpoints and mapping to cortex"
-for vol in ${roi_names}
+for vol in ${roi_names[*]}
 do
 	vol_name=`echo ${vol%%.nii.gz}`
 
