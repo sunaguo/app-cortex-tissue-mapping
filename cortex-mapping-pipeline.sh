@@ -275,7 +275,7 @@ do
 done
 echo "surface files generated"
 
-if [ ! -f ./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
+if [ -f ./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
 	echo "cortexmap structure generation complete"
 	exit 0
 else
