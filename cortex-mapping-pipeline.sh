@@ -342,7 +342,7 @@ do
 			
 			# set structure
 			wb_command -set-structure \
-				{funcdir}/${hemi}.${vol_name}.func.gii \
+				${funcdir}/${hemi}.${vol_name}.func.gii \
 				${STRUCTURE}
 
 			# set map name and pallete
