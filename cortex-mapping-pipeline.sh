@@ -402,7 +402,7 @@ do
 			rm -rf ${rh_file}
 		elif [[ ${cnz_lh} -le $(( cnz_rh+(cnz_rh/10) )) && ${cnz_lh} -ge $(( cnz_rh-(cnz_rh/10) )) ]]; then 
 			echo "keeping both hemispheres"
-		elif [[ ${cnz_lh} -lt ${cnz_rh} ]]
+		elif [[ ${cnz_lh} -lt ${cnz_rh} ]]; then
 			echo "keeping right hemisphere"
 			rm -rf ${lh_file}
 		else 
