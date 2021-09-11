@@ -394,10 +394,10 @@ do
 	cnz_rh=`wb_command -metric-stats ${rh_file} -reduce COUNT_NONZERO`
 	total_verts=`wb_command -file-information ${lh_file} -no-map-info | grep -nwi "Number of Vertices" | cut -f3 -d ':' | xargs`
 	if [[ ${cnz_lh} -gt 0 || ${cnz_rh} -gt 0 ]] && [[ $(( cnz_lh+cnz_rh )) -ge 10 ]]; then
-		if [[ "rh" in *"${vol_name}"* ]] || [[ "right" in *"${vol_name}"* ]] || [[ "RH" in *"${vol_name}"* ]] || [[ "RIGHT" in *"${vol_name}"* ]]; then 
+		if [[ "rh" == *"${vol_name}"* ]] || [[ "right" == *"${vol_name}"* ]] || [[ "RH" == *"${vol_name}"* ]] || [[ "RIGHT" == *"${vol_name}"* ]]; then 
 			echo "keeping right hemisphere"
 			rm -rf ${lh_file}
-		elif [[ "lh" in *"${vol_name}"* ]] || [[ "left" in *"${vol_name}"* ]] || [[ "LH" in *"${vol_name}"* ]] || [[ "LEFT" in *"${vol_name}"* ]]; then
+		elif [[ "lh" == *"${vol_name}"* ]] || [[ "left" == *"${vol_name}"* ]] || [[ "LH" == *"${vol_name}"* ]] || [[ "LEFT" == *"${vol_name}"* ]]; then
 			echo "keeping left hemisphere"
 			rm -rf ${rh_file}
 		elif [[ ${cnz_lh} -le $(( cnz_rh+(cnz_rh/10) )) && ${cnz_lh} -ge $(( cnz_rh-(cnz_rh/10) )) ]]; then 
