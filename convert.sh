@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # set top variables
-surf_data_left=`jq -r '.surf_data_lh' config.json`
-surf_data_right=`jq -r '.surf_data_rh' config.json`
-surf_verts_left=`jq -r '.surf_verts_lh' config.json`
-surf_verts_right=`jq -r '.surf_verts_rh' config.json`
+surf_data_left=`jq -r '.surf_data_left' config.json`
+surf_data_right=`jq -r '.surf_data_right' config.json`
+surf_verts_left=`jq -r '.surf_verts_left' config.json`
+surf_verts_right=`jq -r '.surf_verts_right' config.json`
 label=`jq -r '.label' config.json`
 hemi="left right"
 
