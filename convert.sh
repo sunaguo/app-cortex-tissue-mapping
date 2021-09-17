@@ -56,7 +56,7 @@ do
 done
 
 # final check
-[ "$(ls -A ./cortexmap/cortexmap/${importdir})" ] && echo "something went wrong. check logs and derivatives" && exit 1 || echo "complete" && exit 0
+[ ! "$(ls -A ./cortexmap/cortexmap/${importdir})" ] && echo "something went wrong. check logs and derivatives" && exit 1 || echo "complete" && exit 0
 
 
 
