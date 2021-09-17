@@ -1,20 +1,9 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=8,walltime=1:30:00
-#PBS -N app-cortex-mapping
-#PBS -l vmem=20gb
+#PBS -l nodes=1:ppn=1,walltime=0:30:00
+#PBS -N app-convert-surface-datatype
+#PBS -l vmem=16gb
 #PBS -V
 
 set -e
 
-[ -z "$FREESURFER_LICENSE" ] && echo "Please set FREESURFER_LICENSE in .bashrc" && exit 1;
-echo $FREESURFER_LICENSE > license.txt
-
-if [ ! -f snr.nii.gz ]; then
-	echo "computing snr"
-	time singularity exec -e docker://brainlife/fsl:5.0.9 ./compute-snr.sh
-fi
-
-echo "mapping measures to cortical surface"
-time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.5.0 ./cortex-mapping-pipeline.sh
-
-mv *.nii.gz c_ras.mat ./metric/ ./raw/
+time singularity exec -e docker://brainlife/fsl:5.0.9 ./convert.sh
