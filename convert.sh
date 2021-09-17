@@ -24,7 +24,7 @@ do
 	files=(`ls ${tmpdir}`)
 
 	# identify if files need to be converted; if so, convert. if not, straight copy
-	for i in ${files}
+	for i in ${files[*]}
 	do
 		if [[ ${i} == *".surf.gii"* ]]; then
 			cp ${tmpdir}/${i} ./cortexmap/cortexmap/surf/
