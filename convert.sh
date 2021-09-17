@@ -8,8 +8,6 @@ surf_verts_right=`jq -r '.surf_verts_right' config.json`
 label=`jq -r '.label' config.json`
 hemi="left right"
 
-cp ${label} ./label.json
-
 # make cortexmap directories
 [ ! -d ./cortexmap ] && mkdir -p cortexmap cortexmap/cortexmap cortexmap/cortexmap/func cortexmap/cortexmap/surf cortexmap/cortexmap/label
 
@@ -44,7 +42,7 @@ do
 	fi
 
 	# if label.json exists, then the data is probably parcellation data. if not, it's probably func data. identify and set appropriate output dirs and names
-	if [ -f label.json ]; then
+	if [ -f ${label} ]; then
 		importdir="label"
 		outname="parc.label.gii"
 	else
