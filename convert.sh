@@ -4,6 +4,7 @@
 surf_data=`jq -r '.surf_data' config.json`
 surf_verts=`jq -r '.surf_verts' config.json`
 data_type=`jq -r '.type' config.json`
+label=`jq -r '.label' config.json`
 hemi="left right"
 
 
@@ -34,7 +35,7 @@ done
 
 ## data
 tmpdir=${surf_data}
-if [ -f ${tmpdir}/label.json ]; then
+if [ -f ${label} ]; then
 	importdir="label"
 	for h in ${hemi}
 	do
