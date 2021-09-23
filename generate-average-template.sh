@@ -33,15 +33,19 @@ do
     elif [[ ${surf} == *".shape.gii" ]]; then
         echo "surface - ${surf}"
 
-        # average first two files
-        wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/surf/${surf} -var 'x' ${inputs[0]}/surf/${surf} -var 'y' ${inputs[1]}/surf/${surf}
+        # sum first two files
+        wb_command -metric-math '(x+y)' ./cortexmap/cortexmap/surf/${surf} -var 'x' ${inputs[0]}/surf/${surf} -var 'y' ${inputs[1]}/surf/${surf}
 
+        # if more than two, sum remaining
         if [ ${num_inputs} -gt 2 ]; then
             for (( i=2; i<${num_inputs}; i++ ))
             do 
-                wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/surf/${surf} -var 'x' ./cortexmap/cortexmap/surf/${surf} -var 'y' ${inputs[$i]}/surf/${surf}
+                wb_command -metric-math '(x+y)' ./cortexmap/cortexmap/surf/${surf} -var 'x' ./cortexmap/cortexmap/surf/${surf} -var 'y' ${inputs[$i]}/surf/${surf}
             done
         fi
+
+        # make average
+        wb_command -metric-math 'x/${num_inputs}' ./cortexmap/cortexmap/surf/${surf} -var 'x' ./cortexmap/cortexmap/surf/${surf}
 
         # update header info
         wb_command -metric-palette ./cortexmap/cortexmap/surf/${surf} \
@@ -82,15 +86,19 @@ for func in ${func_files}
 do
     echo "generating average for ${func}"
     
-    # average first two files
-    wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/func/${func} -var 'x' ${inputs[0]}/func/${func} -var 'y' ${inputs[1]}/func/${func}
+    # sum first two files
+    wb_command -metric-math '(x+y)' ./cortexmap/cortexmap/func/${func} -var 'x' ${inputs[0]}/func/${func} -var 'y' ${inputs[1]}/func/${func}
 
+    # if more than two, sum remaining
     if [ ${num_inputs} -gt 2 ]; then
         for (( i=2; i<${num_inputs}; i++ ))
         do 
-            wb_command -metric-math '(x+y)/2' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func} -var 'y' ${inputs[$i]}/func/${func}
+            wb_command -metric-math '(x+y)' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func} -var 'y' ${inputs[$i]}/func/${func}
         done
     fi
+
+    # compute average
+    wb_command -metric-math 'x/${num_inputs}' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func}
 
     # update header info
     wb_command -metric-palette ./cortexmap/cortexmap/func/${func} \
@@ -123,6 +131,7 @@ do
         done
     fi
 
+    # merge labels
     wb_command -label-merge ./${label_name}.merged.label.gii ${first_line}${second_line}
 
     # compute probability
