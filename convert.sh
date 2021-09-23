@@ -14,9 +14,17 @@ hemi="left right"
 # loop through hemispheres, copy files that don't need conversion / convert files that do
 for h in ${hemi}
 do
+	echo $h
+
+	# set hemisphere substring for connectome workbench format
+	if [[ ${h} == 'left' ]]; then
+		hem="lh"
+	else
+		hem="rh"
+	fi
+	
 	## vertices
 	# set directory
-	$(eval "echo \$lmax${lmax}")
 	tmpdir=$(eval "echo \$surf_verts_${h}")
 
 	# grab data files
@@ -29,18 +37,11 @@ do
 			cp ${tmpdir}/${i} ./cortexmap/cortexmap/surf/
 		else
 			substr=${i%%.gii}
-			cp ${tmpdir}/${i} ./cortexmap/cortexmap/surf/lh.${substr}.surf.gii
+			cp ${tmpdir}/${i} ./cortexmap/cortexmap/surf/${hem}.${substr}.surf.gii
 		fi
 	done
 
 	## surface data
-	# set hemisphere substring for connectome workbench format
-	if [[ ${h} == 'left' ]]; then
-		hem="lh"
-	else
-		hem="rh"
-	fi
-
 	# if label.json exists, then the data is probably parcellation data. if not, it's probably func data. identify and set appropriate output dirs and names
 	if [ -f ${label} ]; then
 		importdir="label"
