@@ -101,6 +101,13 @@ else
 fi
 echo "input diffusion metrics set"
 
+# check if dki is being included with previous tensors. if true, will delete the original tensor mapped data and replace with dki tensor data
+fa_check="./cortexmap/cortexmap/func/lh.fa.func.gii"
+ga_check="./cortexmap/cortexmap/func/lh.ga.func.gii"
+if [ -f ${fa_check} ] && [ ! -f ${ga_check} ] && [[ "${METRIC}" == *"ga"* ]]; then
+	rm -rf ./cortexmap/cortexmap/func/*
+fi
+
 #### copy diffusion measures to temporary folder for ease ####
 echo "copying over diffusion metric data"
 for i in ${METRIC}
