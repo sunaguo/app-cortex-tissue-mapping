@@ -74,10 +74,12 @@ else
 	SPACES_DIR=("./cortexmap/cortexmap/surf/")
 fi
 
-for spaces in ${SPACES_DIR[*]}
-do
-	mkdir -p ${spaces}
-done
+if [[ ${cmap_exist} == 0 ]]; then
+	for spaces in ${SPACES_DIR[*]}
+	do
+		mkdir -p ${spaces}
+	done
+fi
 
 FUNC_DIR=("./cortexmap/cortexmap/func/")
 surfs="pial.surf.gii white.surf.gii"
