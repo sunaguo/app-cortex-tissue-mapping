@@ -105,7 +105,14 @@ echo "input diffusion metrics set"
 fa_check="./cortexmap/cortexmap/func/lh.fa.func.gii"
 ga_check="./cortexmap/cortexmap/func/lh.ga.func.gii"
 if [ -f ${fa_check} ] && [ ! -f ${ga_check} ] && [[ "${METRIC}" == *"ga"* ]]; then
-	rm -rf ./cortexmap/cortexmap/func/*
+	tensors="ad fa md rd"
+	for i in ${tensors}
+	do
+		for h in ${HEMI}
+		do
+			rm -rf ./cortexmap/cortexmap/func/${h}.${i}.func.gii
+		done
+	done
 fi
 
 #### copy diffusion measures to temporary folder for ease ####
