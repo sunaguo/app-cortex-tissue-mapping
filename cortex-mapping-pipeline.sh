@@ -64,7 +64,8 @@ if [[ -f ${cortexmap}/surf/lh.midthickness.native.surf.gii ]]; then
 	cp -R ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
 	if [ ! -z "$(ls -A ${cortexmap}/func/)" ]; then
 		cp -R ${cortexmap}/func/* ./cortexmap/cortexmap/func/
-	fi	chmod -R +rw ./cortexmap
+		chmod -R +rw ./cortexmap
+	fi
 	cmap_exist=1
 else
 	cmap_exist=0
