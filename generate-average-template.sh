@@ -44,8 +44,9 @@ do
             done
         fi
 
-        # make average
-        wb_command -metric-math 'x/${num_inputs}' ./cortexmap/cortexmap/surf/${surf} -var 'x' ./cortexmap/cortexmap/surf/${surf}
+        # compute average
+        tmp_command="wb_command -metric-math '(x/${num_inputs})' ./cortexmap/cortexmap/surf/${surf} -var 'x' ./cortexmap/cortexmap/surf/${surf}"
+        eval `echo $tmp_command`
 
         # update header info
         wb_command -metric-palette ./cortexmap/cortexmap/surf/${surf} \
@@ -98,7 +99,10 @@ do
     fi
 
     # compute average
-    wb_command -metric-math 'x/${num_inputs}' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func}
+    tmp_command="wb_command -metric-math '(x/${num_inputs})' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func}"
+    eval `echo $tmp_command`
+
+    #wb_command -metric-math 'x/${num_inputs}' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func}
 
     # update header info
     wb_command -metric-palette ./cortexmap/cortexmap/func/${func} \
@@ -138,7 +142,9 @@ do
     wb_command -label-probability ./${label_name}.merged.label.gii ./${label_name}.probability.func.gii -exclude-unlabeled
 
     # threshold
-    wb_command -metric-math "(x>${threshold})" ./${label_name}.mask.shape.gii -var 'x' ./${label_name}.probability.func.gii
+    tmp_command="wb_command -metric-math '(x>${threshold})' ./${label_name}.mask.shape.gii -var 'x' ./${label_name}.probability.func.gii"
+    eval `echo $tmp_command`
+    #wb_command -metric-math "(x>${threshold})" ./${label_name}.mask.shape.gii -var 'x' ./${label_name}.probability.func.gii
 
     # export label table so we can import
     wb_command -label-export-table ${inputs[0]}/label/${labs} ./${label_name}.lut.txt
@@ -146,8 +152,10 @@ do
     # loop through roi names and multiply ROI binary by parcel ID value
     names=(`wb_command -file-information ./${label_name}.mask.shape.gii -only-map-names`)
     for (( i=0; i<${#names[@]}; i++ ))
-    do 
-        wb_command -metric-math "x * (${i}+1)" ${label_name}.${names[$i]}.shape.gii -var 'x' ./${label_name}.mask.shape.gii -column ${names[$i]}
+    do
+        tmp_command="wb_command -metric-math 'x * (${i}+1)' ${label_name}.${names[$i]}.shape.gii -var 'x' ./${label_name}.mask.shape.gii -column ${names[$i]}"
+        eval `echo $tmp_command`
+        #wb_command -metric-math "x * (${i}+1)" ${label_name}.${names[$i]}.shape.gii -var 'x' ./${label_name}.mask.shape.gii -column ${names[$i]}
     done
 
     # combine all rois to one file
