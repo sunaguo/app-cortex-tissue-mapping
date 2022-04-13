@@ -153,7 +153,8 @@ do
     names=(`wb_command -file-information ./${label_name}.mask.shape.gii -only-map-names`)
     for (( i=0; i<${#names[@]}; i++ ))
     do
-        tmp_command="wb_command -metric-math 'x * (${i}+1)' ${label_name}.${names[$i]}.shape.gii -var 'x' ./${label_name}.mask.shape.gii -column ${names[$i]}"
+        j=$((i+1))
+        tmp_command="wb_command -metric-math 'x*${j}' ${label_name}.${names[$i]}.shape.gii -var 'x' ./${label_name}.mask.shape.gii -column ${names[$i]}"
         eval `echo $tmp_command`
         #wb_command -metric-math "x * (${i}+1)" ${label_name}.${names[$i]}.shape.gii -var 'x' ./${label_name}.mask.shape.gii -column ${names[$i]}
     done
