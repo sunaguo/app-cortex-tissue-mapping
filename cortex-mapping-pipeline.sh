@@ -324,7 +324,7 @@ do
 				"${hemi}"_ROI
 		fi
 
-		# set up aparc.a2009s labels
+		# set up aparc labels
 		if [ ! -f ./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
 			mris_convert --annot \
 				${freesurfer}/label/${hemi}.${fsurfparc}.annot \
@@ -338,7 +338,7 @@ do
 			wb_command -set-map-names \
 				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
 				-map 1 \
-				"${hemi}"_aparc.a2009s
+				"${hemi}"_${fsurfparc}
 
 			wb_command -gifti-label-add-prefix \
 				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
