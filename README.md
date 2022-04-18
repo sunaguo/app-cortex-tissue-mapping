@@ -6,8 +6,6 @@ This app will map regions of interest of tract endpoints to the cortical surface
 
 The code for this app was adapted from HCP's PostFreesurfer pipeline (https://github.com/Washington-University/HCPpipelines/blob/master/PostFreeSurfer/scripts/FreeSurfer2CaretConvertAndRegisterNonlinear.sh) and RIKEN - Brain Connectomics Imaging Laboratory's NoddiSurfaceMapping repository (https://github.com/RIKEN-BCIL/NoddiSurfaceMapping) for use on brainlife.io.
 
-![glasser_ndi](https://github.com/brainlife/app-cortex-tissue-mapping/blob/v1.1/glasser_ndi.png)
-
 ### Authors
 - Brad Caron (bacaron@iu.edu)
 
