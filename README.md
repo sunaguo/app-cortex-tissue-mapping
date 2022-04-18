@@ -57,7 +57,7 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.572](h
 }
 ```
 
-### Sample Datasets
+<!-- ### Sample Datasets
 
 You can download sample datasets from Brainlife using [Brainlife CLI](https://github.com/brain-life/cli).
 
@@ -76,7 +76,7 @@ bl dataset download --id 5c5d35e3f5d2a10052842848 && mv 5c5d35e3f5d2a10052842848
 
 ```bash
 ./main
-```
+``` -->
 
 ## Output
 
