@@ -1,5 +1,5 @@
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.573-blue.svg)](https://doi.org/10.25663/brainlife.app.573)
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.551-blue.svg)](https://doi.org/10.25663/brainlife.app.551)
 
 #  Create structural derivatives for cortexmap datatype
 This app will create the structural derivatives for the cortexmap datatype, including gifti files of the left and right hemisphere: 1) pial, 2) white, 3) inflated, and 4) midthickness surfaces. Will also copy over a Freesurfer surface parcellation. The intended use of this app is as a first step for performing cortex tissue mapping analyses.
@@ -35,7 +35,7 @@ We kindly ask that you cite the following articles when publishing papers and co
 
 ### On Brainlife.io
 
-You can submit this App online at [https://doi.org/10.25663/brainlife.app.573](https://doi.org/10.25663/bl.app.573) via the "Execute" tab.
+You can submit this App online at [https://doi.org/10.25663/brainlife.app.551](https://doi.org/10.25663/bl.app.551) via the "Execute" tab.
 
 ### Running Locally (on your machine)
 
