@@ -78,12 +78,7 @@ The secondary output of this app is `product.json`. This file allows web interfa
 
 ### Dependencies
 
-This App requires the following libraries when run locally.
 
-  - singularity: https://singularity.lbl.gov/
-  - FSL: https://hub.docker.com/r/brainlife/fsl/tags/5.0.9
-  - Freesurfer: https://hub.docker.com/r/brainlife/freesurfer/tags/6.0.0
-  - jsonlab: https://github.com/fangq/jsonlab.git
-  - Connectome Workbench: https://hub.docker.com/r/brainlife/connectome_workbench
+This App only requires [singularity](https://www.sylabs.io/singularity/) to run. If you don't have singularity, you will need to install following dependencies. If running locally without singularity, just requires a terminal with 'cp' function.
   
 #### MIT Copyright (c) 2020 brainlife.io The University of Texas at Austin and Indiana University
