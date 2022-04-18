@@ -87,7 +87,7 @@ The secondary output of this app is `product.json`. This file allows web interfa
 
 ### Dependencies
 
-This App requires the following libraries when run locally.
+This App only requires [singularity](https://www.sylabs.io/singularity/) to run. If you don't have singularity, you will need to install the following libraries:
 
   - singularity: https://singularity.lbl.gov/
   - FSL: https://hub.docker.com/r/brainlife/fsl/tags/5.0.9
