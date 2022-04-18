@@ -1,8 +1,8 @@
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.379-blue.svg)](https://doi.org/10.25663/brainlife.app.379)
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.572-blue.svg)](https://doi.org/10.25663/brainlife.app.572)
 
-# app-cortex-tissue-mapping
-This app will map volumated measure files (i.e. tensor, NODDI, myelin) to the cortical surface following procedures outlined in Fukutomi et al (2018; 10.1016/j.neuroimage.2018.02.017) using Connectome Workbench and the minimal preprocessing pipeline of the Human Connectome Project (2013; 10.1016/j.neuroimage.2013.04.127). Specifically, this app generates a mid-thickness surface (i.e. the mid-distance spline between the cortical and pial surfaces) and maps measures to this surface. This surface can be in native space, or, if a warp to a template space is provided, template space. This app needs for inputs: DWI, measure volume files (i.e. tensor, NODDI), freesurfer, and an optional brainmask. If a template surface is requested, the user must input a warp datatype with the warp and inverse warp niftis. See "FSL Anat" for an app that generates these warp files. This app outputs a cortexmap datatype, which contains three folders: func (contains mapped measures to surface), surf (contains all surface derivatives generated, including midthickness surface), and label (contains aparc.a2009s.aseg label niftis). The output surfaces and functional measures can be viewed using the Connectome Workbench viewer.
+# Map tract endpoint ROIs to cortical surface for quantitative analyses
+This app will map regions of interest of tract endpoints to the cortical surface in order to use for downstream quantitative analyses. 
 
 The code for this app was adapted from HCP's PostFreesurfer pipeline (https://github.com/Washington-University/HCPpipelines/blob/master/PostFreeSurfer/scripts/FreeSurfer2CaretConvertAndRegisterNonlinear.sh) and RIKEN - Brain Connectomics Imaging Laboratory's NoddiSurfaceMapping repository (https://github.com/RIKEN-BCIL/NoddiSurfaceMapping) for use on brainlife.io.
 
@@ -16,20 +16,30 @@ The code for this app was adapted from HCP's PostFreesurfer pipeline (https://gi
 - Franco Pestilli (franpest@indiana.edu)
 
 ### Funding
+
+brainlife.io is publicly funded and for the sustainability of the project it is helpful to Acknowledge the use of the platform. We kindly ask that you acknowledge the funding below in your publications and code reusing this code.
+
 [![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853)
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
+[![NSF-ACI-1916518](https://img.shields.io/badge/NSF_ACI-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1916518)
+[![NSF-IIS-1912270](https://img.shields.io/badge/NSF_IIS-1912270-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1912270)
+[![NIH-NIBIB-R01EB029272](https://img.shields.io/badge/NIH_NIBIB-R01EB029272-green.svg)](https://grantome.com/grant/NIH/R01-EB029272-01)
 
-### References
+### Citations
 
-Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017
+We kindly ask that you cite the following articles when publishing papers and code using this code.
 
-Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage. 2013;80:105-124. doi:10.1016/j.neuroimage.2013.04.127
+1. Avesani, P., McPherson, B., Hayashi, S. et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6, 69 (2019). https://doi.org/10.1038/s41597-019-0073-y
+
+2. Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017
+
+3. Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage. 2013;80:105-124. doi:10.1016/j.neuroimage.2013.04.127
 
 ## Running the App 
 
 ### On Brainlife.io
 
-You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](https://doi.org/10.25663/bl.app.379) via the "Execute" tab.
+You can submit this App online at [https://doi.org/10.25663/brainlife.app.572](https://doi.org/10.25663/bl.app.572) via the "Execute" tab.
 
 ### Running Locally (on your machine)
 
@@ -38,20 +48,12 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](h
 
 ```json
 {
-        "dwi": "./input/dwi/dwi.nii.gz",
-        "bval": "./input/dwi/dwi.bvals",
-        "bvec": "./input/dwi/dwi.bvecs",
-        "freesurfer": "./input/freesurfer/output/.",
-        "fa": "./input/tensor/fa.nii.gz",
-        "ad": "./input/tensor/ad.nii.gz",
-        "md": "./input/tensor/md.nii.gz",
-        "rd": "./input/tensor/rd.nii.gz",
-        "icvf": "null",
-        "isovf": "null",
-        "od": "null",
-        "brainmask":  "null",
-        "warp": "null",
-        "inverse_warp": "null"
+        "rois": "./input/rois/rois",
+        "freesurfer": "./input/freesurfer/output",
+        "warp": "./input/warp/warp.nii.gz",
+        "inverse_warp": "./input/warp/inverse-warp.nii.gz",
+        "cortexmap": "./input/cortexmap/cortexmap",
+        "fsurfparc": "aparc.a2009s"
 }
 ```
 
