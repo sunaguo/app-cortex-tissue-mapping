@@ -1,8 +1,8 @@
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.576-blue.svg)](https://doi.org/10.25663/brainlife.app.579)
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.573-blue.svg)](https://doi.org/10.25663/brainlife.app.573)
 
-#  Convert surface datatypes to cortexmap datatype 
-This app will convert the surface/data and surface/vertices datatypes into a cortexmap datatype. This is intended for easier use with Connectome Workbench, including the viewers.
+#  Create structural derivatives for cortexmap datatype
+This app will create the structural derivatives for the cortexmap datatype, including gifti files of the left and right hemisphere: 1) pial, 2) white, 3) inflated, and 4) midthickness surfaces. Will also copy over a Freesurfer surface parcellation. The intended use of this app is as a first step for performing cortex tissue mapping analyses.
 
 ### Authors
 - Brad Caron (bacaron@iu.edu)
@@ -12,14 +12,30 @@ This app will convert the surface/data and surface/vertices datatypes into a cor
 - Franco Pestilli (franpest@indiana.edu)
 
 ### Funding
+
+brainlife.io is publicly funded and for the sustainability of the project it is helpful to Acknowledge the use of the platform. We kindly ask that you acknowledge the funding below in your publications and code reusing this code.
+
 [![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853)
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
+[![NSF-ACI-1916518](https://img.shields.io/badge/NSF_ACI-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1916518)
+[![NSF-IIS-1912270](https://img.shields.io/badge/NSF_IIS-1912270-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1912270)
+[![NIH-NIBIB-R01EB029272](https://img.shields.io/badge/NIH_NIBIB-R01EB029272-green.svg)](https://grantome.com/grant/NIH/R01-EB029272-01)
+
+### Citations
+
+We kindly ask that you cite the following articles when publishing papers and code using this code.
+
+1. Avesani, P., McPherson, B., Hayashi, S. et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6, 69 (2019). https://doi.org/10.1038/s41597-019-0073-y
+
+2. Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017
+
+3. Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage. 2013;80:105-124. doi:10.1016/j.neuroimage.2013.04.127
 
 ## Running the App 
 
 ### On Brainlife.io
 
-You can submit this App online at [https://doi.org/10.25663/brainlife.app.576](https://doi.org/10.25663/bl.app.576) via the "Execute" tab.
+You can submit this App online at [https://doi.org/10.25663/brainlife.app.573](https://doi.org/10.25663/bl.app.573) via the "Execute" tab.
 
 ### Running Locally (on your machine)
 
@@ -28,11 +44,10 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.576](h
 
 ```json
 {
-        "surf_data_left": "./input/surf_data/left.gii",
-        "surf_data_right": "./input/surf_data/right.gii",
-        "label": "./input/surf_data/label.json",
-        "surf_verts_left": "./input/surf_verts/left",
-        "surf_verts_right": "./input/surf_verts/right"
+        "freesurfer": "./input/freesurfer/output",
+        "warp": "./input/warp/warp.nii.gz",
+        "inv_warp": "./input/warp/inverse-warp.nii.gz",
+        "fsurfparc":    "aparc.a2009s"
 }
 ```
 
@@ -66,7 +81,7 @@ The secondary output of this app is `product.json`. This file allows web interfa
 
 ### Dependencies
 
-This App requires the following libraries when run locally.
+This App only requires [singularity](https://www.sylabs.io/singularity/) to run. If you don't have singularity, you will need to install the following libraries:
 
   - singularity: https://singularity.lbl.gov/
   - FSL: https://hub.docker.com/r/brainlife/fsl/tags/5.0.9
