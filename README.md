@@ -1,8 +1,8 @@
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.379-blue.svg)](https://doi.org/10.25663/brainlife.app.379)
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.576-blue.svg)](https://doi.org/10.25663/brainlife.app.579)
 
-# app-cortex-tissue-mapping
-This app will map volumated measure files (i.e. tensor, NODDI, myelin) to the cortical surface following procedures outlined in Fukutomi et al (2018; 10.1016/j.neuroimage.2018.02.017) using Connectome Workbench and the minimal preprocessing pipeline of the Human Connectome Project (2013; 10.1016/j.neuroimage.2013.04.127). Specifically, this app generates a mid-thickness surface (i.e. the mid-distance spline between the cortical and pial surfaces) and maps measures to this surface. This surface can be in native space, or, if a warp to a template space is provided, template space. This app needs for inputs: DWI, measure volume files (i.e. tensor, NODDI), freesurfer, and an optional brainmask. If a template surface is requested, the user must input a warp datatype with the warp and inverse warp niftis. See "FSL Anat" for an app that generates these warp files. This app outputs a cortexmap datatype, which contains three folders: func (contains mapped measures to surface), surf (contains all surface derivatives generated, including midthickness surface), and label (contains aparc.a2009s.aseg label niftis). The output surfaces and functional measures can be viewed using the Connectome Workbench viewer.
+#  Convert surface datatypes to cortexmap datatype 
+This app will convert the surface/data and surface/vertices datatypes into a cortexmap datatype. This is intended for easier use with Connectome Workbench, including the viewers.
 
 The code for this app was adapted from HCP's PostFreesurfer pipeline (https://github.com/Washington-University/HCPpipelines/blob/master/PostFreeSurfer/scripts/FreeSurfer2CaretConvertAndRegisterNonlinear.sh) and RIKEN - Brain Connectomics Imaging Laboratory's NoddiSurfaceMapping repository (https://github.com/RIKEN-BCIL/NoddiSurfaceMapping) for use on brainlife.io.
 
@@ -29,7 +29,7 @@ Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelin
 
 ### On Brainlife.io
 
-You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](https://doi.org/10.25663/bl.app.379) via the "Execute" tab.
+You can submit this App online at [https://doi.org/10.25663/brainlife.app.576](https://doi.org/10.25663/bl.app.576) via the "Execute" tab.
 
 ### Running Locally (on your machine)
 
@@ -38,24 +38,15 @@ You can submit this App online at [https://doi.org/10.25663/brainlife.app.379](h
 
 ```json
 {
-        "dwi": "./input/dwi/dwi.nii.gz",
-        "bval": "./input/dwi/dwi.bvals",
-        "bvec": "./input/dwi/dwi.bvecs",
-        "freesurfer": "./input/freesurfer/output/.",
-        "fa": "./input/tensor/fa.nii.gz",
-        "ad": "./input/tensor/ad.nii.gz",
-        "md": "./input/tensor/md.nii.gz",
-        "rd": "./input/tensor/rd.nii.gz",
-        "icvf": "null",
-        "isovf": "null",
-        "od": "null",
-        "brainmask":  "null",
-        "warp": "null",
-        "inverse_warp": "null"
+        "surf_data_left": "./input/surf_data/left.gii",
+        "surf_data_right": "./input/surf_data/right.gii",
+        "label": "./input/surf_data/label.json",
+        "surf_verts_left": "./input/surf_verts/left",
+        "surf_verts_right": "./input/surf_verts/right"
 }
 ```
 
-### Sample Datasets
+<!-- ### Sample Datasets
 
 You can download sample datasets from Brainlife using [Brainlife CLI](https://github.com/brain-life/cli).
 
@@ -67,7 +58,7 @@ bl dataset download --id 5b96bbf2059cf900271924f3 && mv 5b96bbf2059cf900271924f3
 bl dataset download --id 5967bffa9b45c212bbec8958 && mv 5967bffa9b45c212bbec8958 input/freesurfer
 bl dataset download --id 5c5d35e3f5d2a10052842848 && mv 5c5d35e3f5d2a10052842848 input/tensor
 
-```
+``` -->
 
 
 3. Launch the App by executing `main`
