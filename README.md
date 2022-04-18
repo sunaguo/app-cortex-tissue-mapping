@@ -4,10 +4,6 @@
 #  Convert surface datatypes to cortexmap datatype 
 This app will convert the surface/data and surface/vertices datatypes into a cortexmap datatype. This is intended for easier use with Connectome Workbench, including the viewers.
 
-The code for this app was adapted from HCP's PostFreesurfer pipeline (https://github.com/Washington-University/HCPpipelines/blob/master/PostFreeSurfer/scripts/FreeSurfer2CaretConvertAndRegisterNonlinear.sh) and RIKEN - Brain Connectomics Imaging Laboratory's NoddiSurfaceMapping repository (https://github.com/RIKEN-BCIL/NoddiSurfaceMapping) for use on brainlife.io.
-
-![glasser_ndi](https://github.com/brainlife/app-cortex-tissue-mapping/blob/v1.1/glasser_ndi.png)
-
 ### Authors
 - Brad Caron (bacaron@iu.edu)
 
@@ -18,12 +14,6 @@ The code for this app was adapted from HCP's PostFreesurfer pipeline (https://gi
 ### Funding
 [![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853)
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
-
-### References
-
-Fukutomi, H. et al. Neurite imaging reveals microstructural variations in human cerebral cortical gray matter. Neuroimage (2018). doi:10.1016/j.neuroimage.2018.02.017
-
-Glasser MF, Sotiropoulos SN, Wilson JA, et al. The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage. 2013;80:105-124. doi:10.1016/j.neuroimage.2013.04.127
 
 ## Running the App 
 
