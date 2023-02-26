@@ -352,7 +352,7 @@ do
 			mri_vol2surf --mov ${vol_data} \
 				--hemi ${hemi} \
 				--surf white \
-				--projdist-max 0 6 0.1 \
+				--projfrac-max 0 1 0.1 \
 				--regheader "output" \
 				--o ${funcdir}/${hemi}.${vol_name}.func.gii
 			
