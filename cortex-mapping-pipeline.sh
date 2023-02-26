@@ -23,8 +23,8 @@ echo "parsing inputs"
 freesurfer=`jq -r '.freesurfer' config.json`
 rois=`jq -r '.rois' config.json`
 cortexmap=`jq -r '.cortexmap' config.json`
-warp=`jq -r '.warp' config.json`
-inv_warp=`jq -r '.inverse_warp' config.json`
+# warp=`jq -r '.warp' config.json`
+# inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
 echo "parsing inputs complete"
 
@@ -35,7 +35,7 @@ CARETHemi="L R"
 echo "hemisphere labels set"
 
 # if cortexmap already exists, copy
-if [[ -f ${cortexmap}/surf/lh.midthickness.native.surf.gii ]]; then
+if [[ -f ${cortexmap}/surf/lh.midthickness.fsaverage.surf.gii ]]; then
 	cp -R ${cortexmap}/label/* ./cortexmap/cortexmap/label/
 	cp -R ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
 	cp -R ${cortexmap}/func/* ./cortexmap/cortexmap/func/
@@ -46,13 +46,13 @@ else
 fi
 # set other variables for ease of scripting
 echo "setting useful variables"
-if [[ ! ${warp} == 'null' ]]; then
-	SPACES="native mni"
-	SPACES_DIR=("./cortexmap/cortexmap/surf" "./cortexmap/cortexmap/surf/mni")
-else
-	SPACES="native"
-	SPACES_DIR=("./cortexmap/cortexmap/surf/")
-fi
+# if [[ ! ${warp} == 'null' ]]; then
+# 	SPACES="fsaverage mni"
+# 	SPACES_DIR=("./cortexmap/cortexmap/surf" "./cortexmap/cortexmap/surf/mni")
+# else
+SPACES="fsaverage"
+SPACES_DIR=("./cortexmap/cortexmap/surf/")
+# fi
 
 if [[ ${cmap_exist} == 0 ]]; then
 	for spaces in ${SPACES_DIR[*]}
@@ -73,25 +73,26 @@ if [[ ! -d ./rois ]]; then
 fi
 
 #### copy over freesurfer
-if [[ ! -d ./output ]]; then
-	cp -R ${freesurfer} ./output
-	chmod -R +rw ./output
-	freesurfer='./output'
-fi
+# if [[ ! -d ./output ]]; then
+# 	cp -R  ${freesurfer} ./output
+# 	chmod -R +rw ./output
+# 	freesurfer='./output'
+# fi
+freesurfer='./fsaverage-dirs/${freesurfer}'
 
 #### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
-if [ ! -f c_ras.mat ]; then
-	echo "identifying transform between freesurfer and anat space"
-	MatrixXYZ=`mri_info --cras ${freesurfer}/mri/brain.finalsurfs.mgz`
-	MatrixX=`echo ${MatrixXYZ} | awk '{print $1;}'`
-	MatrixY=`echo ${MatrixXYZ} | awk '{print $2;}'`
-	MatrixZ=`echo ${MatrixXYZ} | awk '{print $3;}'`
-	echo "1 0 0 ${MatrixX}" >  c_ras.mat
-	echo "0 1 0 ${MatrixY}" >> c_ras.mat
-	echo "0 0 1 ${MatrixZ}" >> c_ras.mat
-	echo "0 0 0 1"          >> c_ras.mat
-fi
-echo "transform computed"
+# if [ ! -f c_ras.mat ]; then
+# 	echo "identifying transform between freesurfer and anat space"
+# 	MatrixXYZ=`mri_info --cras ${freesurfer}/mri/brain.finalsurfs.mgz`
+# 	MatrixX=`echo ${MatrixXYZ} | awk '{print $1;}'`
+# 	MatrixY=`echo ${MatrixXYZ} | awk '{print $2;}'`
+# 	MatrixZ=`echo ${MatrixXYZ} | awk '{print $3;}'`
+# 	echo "1 0 0 ${MatrixX}" >  c_ras.mat
+# 	echo "0 1 0 ${MatrixY}" >> c_ras.mat
+# 	echo "0 0 1 ${MatrixZ}" >> c_ras.mat
+# 	echo "0 0 0 1"          >> c_ras.mat
+# fi
+# echo "transform computed"
 
 #### convert ribbons and surface files ####
 # ribbon
@@ -129,59 +130,59 @@ do
 			fi
 
 			# apply affine
-			[ ! -f ${SPACES_DIR[0]}/${hemi}.cras.${SURFS} ] && wb_command -surface-apply-affine ${SPACES_DIR[0]}/${hemi}.${SURFS} \
-				c_ras.mat \
-				${SPACES_DIR[0]}/${hemi}.cras.${SURFS}
+			# [ ! -f ${SPACES_DIR[0]}/${hemi}.cras.${SURFS} ] && wb_command -surface-apply-affine ${SPACES_DIR[0]}/${hemi}.${SURFS} \
+			# 	c_ras.mat \
+			# 	${SPACES_DIR[0]}/${hemi}.cras.${SURFS}
 
-			if [[ ! ${warp} == 'null' ]]; then
-				# apply MNI warp
-				[ ! -f ${SPACES_DIR[1]}/${hemi}.mni.${SURFS} ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.cras.${SURFS} ${inv_warp} \
-					${SPACES_DIR[1]}/${hemi}.mni.${SURFS} \
-					-fnirt \
-					${warp}
-			fi
+			# if [[ ! ${warp} == 'null' ]]; then
+			# 	# apply MNI warp
+			# 	[ ! -f ${SPACES_DIR[1]}/${hemi}.mni.${SURFS} ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.cras.${SURFS} ${inv_warp} \
+			# 		${SPACES_DIR[1]}/${hemi}.mni.${SURFS} \
+			# 		-fnirt \
+			# 		${warp}
+			# fi
 		done
 
 		# create midthickness surfaces
-		if [ ! -f ${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii ]; then 
+		if [ ! -f ${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii ]; then 
 			wb_command -surface-average \
-				${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii \
+				${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii \
 				-surf ${SPACES_DIR[0]}/${hemi}.cras.white.surf.gii \
 				-surf ${SPACES_DIR[0]}/${hemi}.cras.pial.surf.gii
 
 			wb_command -set-structure \
-				${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii \
+				${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii \
 				${STRUCTURE} \
 				-surface-type ANATOMICAL \
 				-surface-secondary-type MIDTHICKNESS
 
-			if [[ ! ${warp} == 'null' ]]; then
-				[ ! -f ${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii ${inv_warp} \
-					${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii \
-					-fnirt \
-					${warp}
-			fi
+			# if [[ ! ${warp} == 'null' ]]; then
+			# 	[ ! -f ${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii ] && wb_command -surface-apply-warpfield ${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii ${inv_warp} \
+			# 		${SPACES_DIR[1]}/${hemi}.midthickness.mni.surf.gii \
+			# 		-fnirt \
+			# 		${warp}
+			# fi
 		fi
 
 		# identify number of vertices for inflation
-		NativeVerts=$(wb_command -file-information ${SPACES_DIR[0]}/${hemi}.midthickness.native.surf.gii | grep 'Number of Vertices:' | cut -f2 -d: | tr -d '[:space:]')
-        NativeInflationScale=$(echo "scale=4; 0.75 * $NativeVerts / 32492" | bc -l)
+		fsaverageVerts=$(wb_command -file-information ${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii | grep 'Number of Vertices:' | cut -f2 -d: | tr -d '[:space:]')
+        fsaverageInflationScale=$(echo "scale=4; 0.75 * $fsaverageVerts / 32492" | bc -l)
 
         # inflate surfaces
         for spaces in ${SPACES}
         do
-        	if [[ ${spaces} == 'native' ]]; then
+        	if [[ ${spaces} == 'fsaverage' ]]; then
         		outdir=${SPACES_DIR[0]}
         	else
         		outdir=${SPACES_DIR[1]}
         	fi
 
-	        # inflate native
+	        # inflate fsaverage
 	        [ ! -f ${outdir}/${hemi}.midthickness.very_inflated.${spaces}.surf.gii ] && wb_command -surface-generate-inflated \
 	        	${outdir}/${hemi}.midthickness.${spaces}.surf.gii \
 	        	${outdir}/${hemi}.midthickness.inflated.${spaces}.surf.gii \
 	        	${outdir}/${hemi}.midthickness.very_inflated.${spaces}.surf.gii \
-	        	-iterations-scale $NativeInflationScale
+	        	-iterations-scale $fsaverageInflationScale
 	    done
 
 	    # volume-specific operations
@@ -267,12 +268,12 @@ do
 				${outdir}/${hemi}.${thickness_name}
 
 			wb_command -metric-fill-holes \
-				${outdir}/${hemi}.midthickness.native.surf.gii \
+				${outdir}/${hemi}.midthickness.fsaverage.surf.gii \
 				${outdir}/${hemi}.roi.shape.gii \
 				${outdir}/${hemi}.roi.shape.gii
 
 			wb_command -metric-remove-islands \
-				${outdir}/${hemi}.midthickness.native.surf.gii \
+				${outdir}/${hemi}.midthickness.fsaverage.surf.gii \
 				${outdir}/${hemi}.roi.shape.gii \
 				${outdir}/${hemi}.roi.shape.gii
 
@@ -283,25 +284,25 @@ do
 		fi
 
 		# set up aparc.a2009s labels
-		if [ ! -f ./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii ]; then
+		if [ ! -f ./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.fsaverage.label.gii ]; then
 			mris_convert --annot \
 				${freesurfer}/label/${hemi}.${fsurfparc}.annot \
 				${freesurfer}/surf/${hemi}.pial \
-				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.fsaverage.label.gii
 
 			wb_command -set-structure \
-				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.fsaverage.label.gii \
 				${STRUCTURE}
 
 			wb_command -set-map-names \
-				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.fsaverage.label.gii \
 				-map 1 \
 				"${hemi}"_${fsurfparc}
 
 			wb_command -gifti-label-add-prefix \
-				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii \
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.fsaverage.label.gii \
 				"${hemi}_" \
-				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.native.label.gii
+				./cortexmap/cortexmap/label/${hemi}.${fsurfparc}.fsaverage.label.gii
 		fi
 done
 echo "surface files generated"
