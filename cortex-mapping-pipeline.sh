@@ -354,7 +354,7 @@ do
 				--hemi ${hemi} \
 				--surf white \
 				--projfrac-max 0 1 0.1 \
-				--regheader "output" \
+				--regheader $freesurfer \
 				--o ${funcdir}/${hemi}.${vol_name}.func.gii
 			
 			# set structure
