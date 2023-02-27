@@ -188,39 +188,39 @@ do
 	    # volume-specific operations
 	    volume_name="volume.shape.gii"
 	    outdir=${SPACES_DIR[0]}
-	    if [ ! -f ${outdir}/${hemi}.${volume_name} ]; then
-	    	mris_convert -c ${freesurfer}/surf/${hemi}.volume \
-	    		${freesurfer}/surf/${hemi}.white \
-	    		${outdir}/${hemi}.${volume_name}
+# 	    if [ ! -f ${outdir}/${hemi}.${volume_name} ]; then
+# 	    	mris_convert -c ${freesurfer}/surf/${hemi}.volume \
+# 	    		${freesurfer}/surf/${hemi}.white \
+# 	    		${outdir}/${hemi}.${volume_name}
 
-			wb_command -set-structure ${outdir}/${hemi}.${volume_name} \
-				${STRUCTURE}
+# 			wb_command -set-structure ${outdir}/${hemi}.${volume_name} \
+# 				${STRUCTURE}
 
-			wb_command -set-map-names ${outdir}/${hemi}.${volume_name} \
-				-map 1 ${hemi}_Volume
+# 			wb_command -set-map-names ${outdir}/${hemi}.${volume_name} \
+# 				-map 1 ${hemi}_Volume
 
-			wb_command -metric-palette ${outdir}/${hemi}.${volume_name} \
-				MODE_AUTO_SCALE_PERCENTAGE \
-				-pos-percent 2 98 \
-				-palette-name Gray_Interp \
-				-disp-pos true \
-				-disp-neg true \
-				-disp-zero true
+# 			wb_command -metric-palette ${outdir}/${hemi}.${volume_name} \
+# 				MODE_AUTO_SCALE_PERCENTAGE \
+# 				-pos-percent 2 98 \
+# 				-palette-name Gray_Interp \
+# 				-disp-pos true \
+# 				-disp-neg true \
+# 				-disp-zero true
 			
-			wb_command -metric-math "abs(volume)" \
-				${outdir}/${hemi}.${volume_name} \
-				-var volume \
-				${outdir}/${hemi}.${volume_name}
+# 			wb_command -metric-math "abs(volume)" \
+# 				${outdir}/${hemi}.${volume_name} \
+# 				-var volume \
+# 				${outdir}/${hemi}.${volume_name}
 
-			wb_command -metric-palette ${outdir}/${hemi}.${volume_name} \
-				MODE_AUTO_SCALE_PERCENTAGE \
-				-pos-percent 4 96 \
-				-interpolate true \
-				-palette-name videen_style \
-				-disp-pos true \
-				-disp-neg false \
-				-disp-zero false
-		fi
+# 			wb_command -metric-palette ${outdir}/${hemi}.${volume_name} \
+# 				MODE_AUTO_SCALE_PERCENTAGE \
+# 				-pos-percent 4 96 \
+# 				-interpolate true \
+# 				-palette-name videen_style \
+# 				-disp-pos true \
+# 				-disp-neg false \
+# 				-disp-zero false
+# 		fi
 
 		# thickness-specific operations
 		thickness_name="thickness.shape.gii"
