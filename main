@@ -12,4 +12,4 @@ echo $FREESURFER_LICENSE > license.txt
 echo "mapping measures to cortical surface"
 time singularity exec -e -B `pwd`/license.txt:/usr/local/freesurfer/license.txt docker://brainlife/connectome_workbench:1.5.0 ./cortex-mapping-pipeline.sh
 
-mv *.nii.gz c_ras.mat ./metric/ ./raw/
+mv *.nii.gz ./metric/ ./raw/
