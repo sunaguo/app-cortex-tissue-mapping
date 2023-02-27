@@ -147,8 +147,8 @@ do
 		if [ ! -f ${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii ]; then 
 			wb_command -surface-average \
 				${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii \
-				-surf ${SPACES_DIR[0]}/${hemi}.cras.white.surf.gii \
-				-surf ${SPACES_DIR[0]}/${hemi}.cras.pial.surf.gii
+				-surf ${SPACES_DIR[0]}/${hemi}.white.surf.gii \
+				-surf ${SPACES_DIR[0]}/${hemi}.pial.surf.gii
 
 			wb_command -set-structure \
 				${SPACES_DIR[0]}/${hemi}.midthickness.fsaverage.surf.gii \
