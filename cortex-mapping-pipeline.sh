@@ -78,7 +78,7 @@ fi
 # 	chmod -R +rw ./output
 # 	freesurfer='./output'
 # fi
-freesurfer='./fsaverage-dirs/${freesurfer}'
+freesurfer=./fsaverage-dirs/${freesurfer}
 
 #### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
 # if [ ! -f c_ras.mat ]; then
