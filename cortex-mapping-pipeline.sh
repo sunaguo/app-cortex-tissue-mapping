@@ -405,7 +405,7 @@ do
 
 		# if user requests the metric to be smoothed on the surface, smooth based on surface kernel
 		if [ ! -z ${surface_smooth_kernel} ]; then
-			wb_command -metric-smoothing ${surfdir}/${hemi}.white.surf.gii \
+			wb_command -metric-smoothing ${outdir}/${hemi}.white.surf.gii \
 				${funcdir}/${hemi}.${vol_name}.func.gii \
 				${surface_smooth_kernel} \
 				${funcdir}/${hemi}.${vol_name}.smooth_${surface_smooth_kernel}.func.gii \
