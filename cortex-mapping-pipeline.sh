@@ -26,7 +26,26 @@ cortexmap=`jq -r '.cortexmap' config.json`
 warp=`jq -r '.warp' config.json`
 inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
+fix_zeros=`jq -r '.fix_zeros' config.json`
+volume_smooth_kernel=`jq -r '.volume_smooth_kernel' config.json`
+surface_smooth_kernel=`jq -r '.surface_smooth_kernel' config.json`
+surface_fwhm=`jq -r '.surface_fwhm' config.json`
+smooth_method=`jq -r '.surface_smooth_method' config.json`
 echo "parsing inputs complete"
+
+# parsing smoothing-related inputs
+vsk=""
+fb=""
+sfwhm=""
+if [ ! -z ${volume_smooth_kernel} ]; then
+	vsk="--fwhm ${volume_smooth_kernel}"
+fi
+if [ ${fb} == true ]; then
+	fb="-fix-zeros"
+fi
+if [ ${sfwhm} == true ]; then
+	sfwhm="-fwhm"
+fi
 
 # set hemisphere labels
 echo "set hemisphere labels"
@@ -354,7 +373,7 @@ do
 				--surf white \
 				--projfrac-max 0 1 0.1 \
 				--regheader "output" \
-				--o ${funcdir}/${hemi}.${vol_name}.func.gii
+				--o ${funcdir}/${hemi}.${vol_name}.func.gii ${vsk}
 			
 			# set structure
 			wb_command -set-structure \
@@ -382,6 +401,15 @@ do
 		else
 			echo "${hemi} ${vol_name} failed. check logs"
 			exit 1
+		fi
+
+		# if user requests the metric to be smoothed on the surface, smooth based on surface kernel
+		if [ ! -z ${surface_smooth_kernel} ]; then
+			wb_command -metric-smoothing ${surfdir}/${hemi}.white.surf.gii \
+				${funcdir}/${hemi}.${vol_name}.func.gii \
+				${surface_smooth_kernel} \
+				${funcdir}/${hemi}.${vol_name}.smooth_${surface_smooth_kernel}.func.gii \
+				-method ${smooth_method} ${sfwhm} ${fb}
 		fi
 	done
 	
