@@ -40,10 +40,10 @@ sfwhm=""
 if [ ! -z ${volume_smooth_kernel} ]; then
 	vsk="--fwhm ${volume_smooth_kernel}"
 fi
-if [ ${fb} == true ]; then
+if [[ ${fb} == true ]]; then
 	fb="-fix-zeros"
 fi
-if [ ${sfwhm} == true ]; then
+if [[ ${sfwhm} == true ]]; then
 	sfwhm="-fwhm"
 fi
 
