@@ -418,6 +418,8 @@ do
 	# need to make this better, but good enough for now
 	lh_file=${funcdir}/lh.${vol_name}.func.gii
 	rh_file=${funcdir}/rh.${vol_name}.func.gii
+	lh_smooth_file=${funcdir}/lh.${vol_name}.smooth_${surface_smooth_kernel}.func.gii
+	rh_smooth_file=${funcdir}/rh.${vol_name}.smooth_${surface_smooth_kernel}.func.gii
 	cnz_lh=`wb_command -metric-stats ${lh_file} -reduce COUNT_NONZERO`
 	cnz_rh=`wb_command -metric-stats ${rh_file} -reduce COUNT_NONZERO`
 	total_verts=`wb_command -file-information ${lh_file} -no-map-info | grep -nwi "Number of Vertices" | cut -f3 -d ':' | xargs`
@@ -425,17 +427,29 @@ do
 		if [[ ${vol_name} == *"rh"* ]] || [[ ${vol_name} == *"right"* ]] || [[ ${vol_name} == *"RH"* ]] || [[ ${vol_name} == *"RIGHT"* ]]; then 
 			echo "keeping right hemisphere"
 			rm -rf ${lh_file}
+			if [ -f ${lh_smooth_file} ]; then
+				rm -rf ${lh_smooth_file}
+			fi
 		elif [[ ${vol_name} == *"lh"* ]] || [[ ${vol_name} == *"left"* ]] || [[ ${vol_name} == *"LH"* ]] || [[ ${vol_name} == *"LEFT"* ]]; then
 			echo "keeping left hemisphere"
 			rm -rf ${rh_file}
+			if [ -f ${rh_smooth_file} ]; then
+				rm -rf ${rh_smooth_file}
+			fi
 		elif [[ ${cnz_lh} -le $(( cnz_rh+(cnz_rh/10) )) && ${cnz_lh} -ge $(( cnz_rh-(cnz_rh/10) )) ]]; then 
 			echo "keeping both hemispheres"
 		elif [[ ${cnz_lh} -lt ${cnz_rh} ]]; then
 			echo "keeping right hemisphere"
 			rm -rf ${lh_file}
+			if [ -f ${lh_smooth_file} ]; then
+				rm -rf ${lh_smooth_file}
+			fi
 		else 
 			echo "keeping left hemisphere"
 			rm -rf ${rh_file}
+			if [ -f ${rh_smooth_file} ]; then
+				rm -rf ${rh_smooth_file}
+			fi
 		fi
 	fi
 done
