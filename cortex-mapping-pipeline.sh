@@ -26,7 +26,26 @@ cortexmap=`jq -r '.cortexmap' config.json`
 # warp=`jq -r '.warp' config.json`
 # inv_warp=`jq -r '.inverse_warp' config.json`
 fsurfparc=`jq -r '.fsurfparc' config.json`
+fix_zeros=`jq -r '.fix_zeros' config.json`
+volume_smooth_kernel=`jq -r '.volume_smooth_kernel' config.json`
+surface_smooth_kernel=`jq -r '.surface_smooth_kernel' config.json`
+surface_fwhm=`jq -r '.surface_fwhm' config.json`
+smooth_method=`jq -r '.surface_smooth_method' config.json`
 echo "parsing inputs complete"
+
+# parsing smoothing-related inputs
+vsk=""
+fb=""
+sfwhm=""
+if [ ! -z ${volume_smooth_kernel} ]; then
+	vsk="--fwhm ${volume_smooth_kernel}"
+fi
+if [[ ${fix_zeros} == true ]]; then
+	fb="-fix-zeros"
+fi
+if [[ ${surface_fwhm} == true ]]; then
+	sfwhm="-fwhm"
+fi
 
 # set hemisphere labels
 echo "set hemisphere labels"
@@ -355,7 +374,7 @@ do
 				--surf white \
 				--projfrac-max 0 1 0.1 \
 				--regheader $freesurfer \
-				--o ${funcdir}/${hemi}.${vol_name}.func.gii
+				--o ${funcdir}/${hemi}.${vol_name}.func.gii ${vsk}
 			
 			# set structure
 			wb_command -set-structure \
@@ -384,6 +403,15 @@ do
 			echo "${hemi} ${vol_name} failed. check logs"
 			exit 1
 		fi
+		
+		# if user requests the metric to be smoothed on the surface, smooth based on surface kernel
+		if [ ! -z ${surface_smooth_kernel} ]; then
+			wb_command -metric-smoothing ${outdir}/${hemi}.white.surf.gii \
+				${funcdir}/${hemi}.${vol_name}.func.gii \
+				${surface_smooth_kernel} \
+				${funcdir}/${hemi}.${vol_name}.smooth_${surface_smooth_kernel}.func.gii \
+				-method ${smooth_method} ${sfwhm} ${fb}
+		fi
 	done
 	
 	# filter based on what should be left vs right hemisphere. get rid of other hemisphere files.
@@ -391,24 +419,38 @@ do
 	# need to make this better, but good enough for now
 	lh_file=${funcdir}/lh.${vol_name}.func.gii
 	rh_file=${funcdir}/rh.${vol_name}.func.gii
+	lh_smooth_file=${funcdir}/lh.${vol_name}.smooth_${surface_smooth_kernel}.func.gii
+	rh_smooth_file=${funcdir}/rh.${vol_name}.smooth_${surface_smooth_kernel}.func.gii
 	cnz_lh=`wb_command -metric-stats ${lh_file} -reduce COUNT_NONZERO`
 	cnz_rh=`wb_command -metric-stats ${rh_file} -reduce COUNT_NONZERO`
 	total_verts=`wb_command -file-information ${lh_file} -no-map-info | grep -nwi "Number of Vertices" | cut -f3 -d ':' | xargs`
 	if [[ ${cnz_lh} -gt 0 || ${cnz_rh} -gt 0 ]] && [[ $(( cnz_lh+cnz_rh )) -ge 10 ]]; then
-		if [[ "rh" == *"${vol_name}"* ]] || [[ "right" == *"${vol_name}"* ]] || [[ "RH" == *"${vol_name}"* ]] || [[ "RIGHT" == *"${vol_name}"* ]]; then 
+		if [[ ${vol_name} == *"rh"* ]] || [[ ${vol_name} == *"right"* ]] || [[ ${vol_name} == *"RH"* ]] || [[ ${vol_name} == *"RIGHT"* ]]; then 
 			echo "keeping right hemisphere"
 			rm -rf ${lh_file}
-		elif [[ "lh" == *"${vol_name}"* ]] || [[ "left" == *"${vol_name}"* ]] || [[ "LH" == *"${vol_name}"* ]] || [[ "LEFT" == *"${vol_name}"* ]]; then
+			if [ -f ${lh_smooth_file} ]; then
+				rm -rf ${lh_smooth_file}
+			fi
+		elif [[ ${vol_name} == *"lh"* ]] || [[ ${vol_name} == *"left"* ]] || [[ ${vol_name} == *"LH"* ]] || [[ ${vol_name} == *"LEFT"* ]]; then
 			echo "keeping left hemisphere"
 			rm -rf ${rh_file}
+			if [ -f ${rh_smooth_file} ]; then
+				rm -rf ${rh_smooth_file}
+			fi
 		elif [[ ${cnz_lh} -le $(( cnz_rh+(cnz_rh/10) )) && ${cnz_lh} -ge $(( cnz_rh-(cnz_rh/10) )) ]]; then 
 			echo "keeping both hemispheres"
 		elif [[ ${cnz_lh} -lt ${cnz_rh} ]]; then
 			echo "keeping right hemisphere"
 			rm -rf ${lh_file}
+			if [ -f ${lh_smooth_file} ]; then
+				rm -rf ${lh_smooth_file}
+			fi
 		else 
 			echo "keeping left hemisphere"
 			rm -rf ${rh_file}
+			if [ -f ${rh_smooth_file} ]; then
+				rm -rf ${rh_smooth_file}
+			fi
 		fi
 	fi
 done
