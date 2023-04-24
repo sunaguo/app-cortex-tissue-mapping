@@ -38,9 +38,7 @@ if [[ ${surface_fwhm} == true ]]; then
 fi
 
 # if cortexmap already exists, copy
-cp -R ${cortexmap}/label/* ./cortexmap/cortexmap/label/
-cp -R ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
-cp -R ${cortexmap}/func/* ./cortexmap/cortexmap/func/
+cp -R ${cortexmap} ./cortexmap/
 chmod -R +rw ./cortexmap
 
 surfdir=./cortexmap/surf
