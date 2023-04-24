@@ -48,7 +48,7 @@ fi
 if [[ ${surface_fwhm} == true ]]; then
 	sfwhm="-fwhm"
 fi
-if [[ ! -z ${projfrac_min} ]; then
+if [[ ! -z ${projfrac_min} ]]; then
 	projmin=${projfrac_min}
 else
 	promin=0
