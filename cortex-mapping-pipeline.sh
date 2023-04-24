@@ -11,10 +11,6 @@ OMP_NUM_THREADS=8
 #### make directory and copy metric files to folder ####
 echo "making directories"
 mkdir cortexmap ./cortexmap/cortexmap/
-mkdir metric
-mkdir ./cortexmap/cortexmap/label
-mkdir ./cortexmap/cortexmap/func
-mkdir raw
 echo "making directories complete"
 
 #### Variables ####
