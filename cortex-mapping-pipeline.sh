@@ -46,13 +46,13 @@ funcdir=./cortexmap/cortexmap/func
 
 files=(`find ${funcdir} -name *.gii -printf "%f\n"`)
 
-for i in ${files}
+for i in ${files[*]}
 do
 	hemi=${i%%.*}
 	# smooth data
 	wb_command -metric-smoothing ${surfdir}/${hemi}.white.surf.gii \
 		${funcdir}/${i} \
 		${surface_smooth_kernel} \
-		${funcdir}/${hemi}.${i%%.func.gii}.smooth_${surface_smooth_kernel}.func.gii \
+		${funcdir}/${i%%.func.gii}.smooth_${surface_smooth_kernel}.func.gii \
 		-method ${smooth_method} ${sfwhm} ${fb}
 done
