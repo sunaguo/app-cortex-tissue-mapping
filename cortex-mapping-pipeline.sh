@@ -44,7 +44,7 @@ chmod -R +rw ./cortexmap
 surfdir=./cortexmap/cortexmap/surf
 funcdir=./cortexmap/cortexmap/func
 
-files=(`find ${funcdir} -name *.gii -fprint "%f\n"`)
+files=(`find ${funcdir} -name *.gii -printf "%f\n"`)
 
 for i in ${files}
 do
