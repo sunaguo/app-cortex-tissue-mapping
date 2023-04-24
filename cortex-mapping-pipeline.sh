@@ -41,8 +41,8 @@ fi
 cp -R ${cortexmap} ./cortexmap/
 chmod -R +rw ./cortexmap
 
-surfdir=./cortexmap/surf
-funcdir=./cortexmap/func
+surfdir=./cortexmap/cortexmap/surf
+funcdir=./cortexmap/cortexmap/func
 
 files=(`find ${funcdir} -name *.gii -fprint "%f\n"`)
 
