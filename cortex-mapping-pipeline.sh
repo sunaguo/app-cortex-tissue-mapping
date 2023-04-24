@@ -86,7 +86,7 @@ echo "variables set"
 
 #### copy over rois; set roi_names
 if [[ ! -d ./rois ]]; then
-	cp -R ${rois} ./rois
+	cp -LR ${rois} ./rois
 	chmod -R +rw ./rois
 	roi_names=(`ls ./rois/`)
 fi
