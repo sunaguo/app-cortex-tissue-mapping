@@ -99,8 +99,8 @@ do
     fi
 
     # compute average
-    tmp_command="wb_command -metric-math '(x/${num_inputs})' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func}"
-    eval `echo $tmp_command`
+    #tmp_command="wb_command -metric-math '(x/${num_inputs})' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func}"
+    #eval `echo $tmp_command`
 
     #wb_command -metric-math 'x/${num_inputs}' ./cortexmap/cortexmap/func/${func} -var 'x' ./cortexmap/cortexmap/func/${func}
 
