@@ -62,9 +62,9 @@ echo "hemisphere labels set"
 
 # if cortexmap already exists, copy
 if [[ -f ${cortexmap}/surf/lh.midthickness.native.surf.gii ]]; then
-	cp -R ${cortexmap}/label/* ./cortexmap/cortexmap/label/
-	cp -R ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
-	cp -R ${cortexmap}/func/* ./cortexmap/cortexmap/func/
+	cp -RL ${cortexmap}/label/* ./cortexmap/cortexmap/label/
+	cp -RL ${cortexmap}/surf/* ./cortexmap/cortexmap/surf/
+	cp -RL ${cortexmap}/func/* ./cortexmap/cortexmap/func/
 	chmod -R +rw ./cortexmap
 	cmap_exist=1
 else
@@ -100,7 +100,7 @@ fi
 
 #### copy over freesurfer
 if [[ ! -d ./output ]]; then
-	cp -R ${freesurfer} ./output
+	cp -RL ${freesurfer} ./output
 	chmod -R +rw ./output
 	freesurfer='./output'
 fi
