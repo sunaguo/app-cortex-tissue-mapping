@@ -1,0 +1,11 @@
+{
+    "rois": "inputs/proj-6542d7ceb094062da61faac2/sub-20231004AH/dt-neuro-rois.tag-tractEndpointDensity.tag-resliced.tag-anat.id-656d1f4bd0ae0de2078fa322/rois",
+    "freesurfer": "inputs/proj-6517324eb094062da6e80d31/sub-20231004AH/dt-neuro-freesurfer.tag-preprocessed.tag-acpc_aligned.tag-qsiprep.tag-thalamic_nuclei.id-656a88ebd0ae0de2070a6516/output", 
+    "fsurfparc": "aparc.a2009s",
+    "volume_smooth_kernel": "",
+    "surface_smooth_kernel": "1",
+    "fix_zeros": false,
+    "surface_fwhm": true,
+    "surface_smooth_method": "GEO_GAUSS_AREA",
+    "projfrac_min": "-1"
+}

@@ -1,3 +1,14 @@
+# Map tract endpoint ROIs to cortical surface for quantitative analyses
+Using Brainlife app locally for SemConn UT diffusion processing & testing. 
+
+Use branch `endpoints-v1.1` for the app version with negative projfrac & smoothing.
+
+* 2023.12.05:
+  * current setting: `projfrac_min` -1, some smoothing (heven't decided on width).
+
+---
+orignal README
+
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.572-blue.svg)](https://doi.org/10.25663/brainlife.app.572)
 

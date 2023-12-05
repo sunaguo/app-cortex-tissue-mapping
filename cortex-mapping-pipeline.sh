@@ -10,6 +10,11 @@ OMP_NUM_THREADS=8
 
 #### make directory and copy metric files to folder ####
 echo "making directories"
+
+[[ -d ./cortexmap ]] && rm -r cortexmap
+[[ -d ./metric ]] && rm -r metric
+[[ -d ./raw ]] && rm -r raw
+[[ -d ./rois ]] && rm -r rois
 mkdir cortexmap ./cortexmap/cortexmap/
 mkdir metric
 mkdir ./cortexmap/cortexmap/label
@@ -51,7 +56,7 @@ fi
 if [[ ! -z ${projfrac_min} ]]; then
 	projmin=${projfrac_min}
 else
-	promin=0
+	projmin=0
 fi
 
 # set hemisphere labels
@@ -95,8 +100,11 @@ echo "variables set"
 if [[ ! -d ./rois ]]; then
 	cp -RL ${rois} ./rois
 	chmod -R +rw ./rois
-	roi_names=(`ls ./rois/`)
+	# roi_names=(`ls ./rois/`)
+	roi_names=`ls ./rois/`
 fi
+# roi_names=echo `ls ./rois/`
+# echo $roi_names
 
 #### copy over freesurfer
 if [[ ! -d ./output ]]; then
@@ -379,7 +387,7 @@ do
 				--hemi ${hemi} \
 				--surf white \
 				--projfrac-max ${projmin} 1 0.1 \
-				--regheader "output" \
+				--regheader $freesurfer \
 				--o ${funcdir}/${hemi}.${vol_name}.func.gii ${vsk}
 			
 			# set structure
