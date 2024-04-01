@@ -13,13 +13,15 @@ echo "making directories"
 
 [[ -d ./cortexmap ]] && rm -r cortexmap
 [[ -d ./metric ]] && rm -r metric
-[[ -d ./raw ]] && rm -r raw
 [[ -d ./rois ]] && rm -r rois
+[[ -d ./output ]] && rm -r output
+[ ! -f ./ribbon_lh.nii.gz ] && rm ./ribbon_lh.nii.gz
+[ ! -f ./ribbon_rh.nii.gz ] && rm ./ribbon_rh.nii.gz
+[ ! -f ./c_ras.mat ] && rm ./c_ras.mat
 mkdir cortexmap ./cortexmap/cortexmap/
 mkdir metric
 mkdir ./cortexmap/cortexmap/label
 mkdir ./cortexmap/cortexmap/func
-mkdir raw
 echo "making directories complete"
 
 #### Variables ####
@@ -110,8 +112,8 @@ fi
 if [[ ! -d ./output ]]; then
 	cp -RL ${freesurfer} ./output
 	chmod -R +rw ./output
-	freesurfer='./output'
 fi
+freesurfer='./output'
 
 #### identify transform between freesurfer space and anat space. See HCP pipeline for more reference ####
 if [ ! -f c_ras.mat ]; then
@@ -387,7 +389,7 @@ do
 				--hemi ${hemi} \
 				--surf white \
 				--projfrac-max ${projmin} 1 0.1 \
-				--regheader $freesurfer \
+				--regheader ${freesurfer} \
 				--o ${funcdir}/${hemi}.${vol_name}.func.gii ${vsk}
 			
 			# set structure
