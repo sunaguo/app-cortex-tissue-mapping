@@ -1,6 +1,8 @@
 # Map tract endpoint ROIs to cortical surface for quantitative analyses
-Using Brainlife app locally for SemConn UT diffusion processing & testing. 
 
+**Update 2024.03.31: Brainlife version back online. Use online version instead of local version.**
+
+Using Brainlife app locally for SemConn UT diffusion processing & testing. 
 Use branch `endpoints-v1.1` for the app version with negative `projfrac` & smoothing[^1]. 
 
 [^1]: `projfrac` & smoothing params details: 
@@ -10,12 +12,11 @@ Use branch `endpoints-v1.1` for the app version with negative `projfrac` & smoot
   * Brad: these are all hyperparams that should be determined by the results. Could do width vs results plot to choose. For now using the most smooth (`sigma=1`)
 
 ## General pipeline
-1. `run_main.py`: Creates a separate directory for each subjects, generates surface ROI map, then [TODO] uploads the results to Brainlife project [Semantic Connectivity - UT](https://brainlife.io/project/6542d7ceb094062da61faac2/) with the specified tags;
+1. `run_main.py`: Creates a separate directory for each subjects, generates surface ROI map, then uploads the results to Brainlife project [Semantic Connectivity - UT](https://brainlife.io/project/6542d7ceb094062da61faac2/) with the specified tags;
 2. [TODO] script: copy results to grimes/corral.
     * note output `cortexmap/cortexmap/func` dir contains both smoothed & nonsmoothed data. copy only desired ones over.
 
 ## TODO:
-* in `run_main.py`: add lines to upload copy of results to bl
 * after `run_main.py`: add script to copy things over to correct location to grimes/corral
 
 ---
